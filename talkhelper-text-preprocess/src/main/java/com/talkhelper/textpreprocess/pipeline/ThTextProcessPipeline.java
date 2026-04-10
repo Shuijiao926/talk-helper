@@ -1,5 +1,6 @@
 package com.talkhelper.textpreprocess.pipeline;
 
+import com.talkhelper.common.constant.ThLogConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,7 @@ public class ThTextProcessPipeline {
      * @return 处理后的上下文
      */
     public ThTextProcessContext execute(ThTextProcessContext context) {
-        log.info("========== 开始执行文本处理管道 ==========");
+        log.info(ThLogConstants.LOG_SEPARATOR_START, "文本处理管道");
         
         long startTime = System.currentTimeMillis();
         
@@ -36,11 +37,11 @@ public class ThTextProcessPipeline {
             for (ThTextProcessHandler handler : handlers) {
                 // 检查是否应该执行此处理器
                 if (!handler.shouldHandle(context)) {
-                    log.debug("[{}] 跳过执行", handler.getName());
+                    log.debug(ThLogConstants.HANDLER_SKIP, handler.getName());
                     continue;
                 }
 
-                log.info("[{}] 开始执行...", handler.getName());
+                log.info(ThLogConstants.HANDLER_START, handler.getName());
                 long handlerStartTime = System.currentTimeMillis();
 
                 try {
@@ -48,26 +49,24 @@ public class ThTextProcessPipeline {
                     handler.handle(context);
                     
                     long handlerEndTime = System.currentTimeMillis();
-                    log.info("[{}] 执行成功, 耗时: {}ms", 
+                    log.info(ThLogConstants.HANDLER_SUCCESS, 
                             handler.getName(), handlerEndTime - handlerStartTime);
                     
                 } catch (Exception e) {
-                    log.error("[{}] 执行失败", handler.getName(), e);
+                    log.error(ThLogConstants.HANDLER_ERROR, handler.getName(), e);
                     throw new RuntimeException(
                             String.format("[%s] 处理失败: %s", handler.getName(), e.getMessage()), e);
                 }
             }
 
             long endTime = System.currentTimeMillis();
-            log.info("========== 文本处理管道执行完成, 总耗时: {}ms ==========", 
-                    endTime - startTime);
+            log.info(ThLogConstants.LOG_SEPARATOR_END, "文本处理管道", endTime - startTime);
             
             return context;
             
         } catch (Exception e) {
             long endTime = System.currentTimeMillis();
-            log.error("========== 文本处理管道执行失败, 耗时: {}ms ==========", 
-                    endTime - startTime, e);
+            log.error(ThLogConstants.LOG_SEPARATOR_ERROR, "文本处理管道", endTime - startTime, e);
             throw e;
         }
     }

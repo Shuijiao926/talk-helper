@@ -1,5 +1,6 @@
 package com.talkhelper.web.util;
 
+import com.talkhelper.common.constant.ThLogConstants;
 import com.talkhelper.common.result.ThResult;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +26,7 @@ public class ThResultHelper {
             T result = businessLogic.get();
             return wrapResult(result);
         } catch (Exception e) {
-            log.error("业务执行异常", e);
+            log.error(ThLogConstants.BUSINESS_EXCEPTION, e);
             return ThResult.error("操作失败: " + e.getMessage());
         }
     }
@@ -43,7 +44,7 @@ public class ThResultHelper {
             T result = businessLogic.get();
             return wrapResult(result);
         } catch (Exception e) {
-            log.error("业务执行异常", e);
+            log.error(ThLogConstants.BUSINESS_EXCEPTION, e);
             return ThResult.error(errorMessage + ": " + e.getMessage());
         }
     }

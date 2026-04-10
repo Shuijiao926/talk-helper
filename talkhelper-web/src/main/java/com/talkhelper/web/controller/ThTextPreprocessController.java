@@ -1,52 +1,90 @@
 package com.talkhelper.web.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.talkhelper.common.constant.ThLogConstants;
 import com.talkhelper.common.result.ThResult;
+import com.talkhelper.task.service.ThTaskFacade;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
 import com.talkhelper.textpreprocess.service.ThTextPreprocessService;
-import com.talkhelper.textpreprocess.vo.ThPreprocessResultVO;
 import com.talkhelper.web.annotation.ThApiLog;
 import com.talkhelper.web.util.ThResultHelper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 /**
- * 文本预处理控制器
+ * 文本预处理控制器（异步模式）
+ * 职责：仅负责HTTP层参数校验和响应，业务逻辑委托给Facade
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/text-preprocess")
 public class ThTextPreprocessController {
 
     private final ThTextPreprocessService textPreprocessService;
+    private final ThTaskFacade taskFacade; // 使用门面服务
 
     /**
-     * 上传文件并处理
+     * 上传文件并处理（异步）
      *
      * @param file 上传的文件
-     * @return 处理结果
+     * @return 任务ID
      */
+    @SentinelResource(value = "upload", blockHandler = "handleBlock")
     @ThApiLog("上传文件并处理")
     @PostMapping("/file/upload")
-    public ThResult<ThPreprocessResultVO> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ThResult<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
         return ThResultHelper.execute(
-                () -> textPreprocessService.uploadAndProcess(file),
-                "文件处理失败"
+                () -> taskFacade.createTextPreprocessTask(file, null),
+                ThLogConstants.FILE_PROCESS_ERROR_MSG
         );
     }
 
     /**
-     * 上传文件并处理(带配置)
+     * 上传文件并处理(带配置，异步)
      *
      * @param request 上传请求
-     * @return 处理结果
+     * @return 任务ID
      */
     @ThApiLog("上传文件并处理(带配置)")
     @PostMapping("/upload-with-config")
-    public ThResult<ThPreprocessResultVO> uploadFileWithConfig(ThFileUploadRequest request) {
+    public ThResult<Map<String, String>> uploadFileWithConfig(ThFileUploadRequest request) {
         return ThResultHelper.execute(
-                () -> textPreprocessService.uploadAndProcessWithConfig(request),
-                "文件处理失败"
+                () -> taskFacade.createTextPreprocessTaskWithConfig(request, null),
+                ThLogConstants.FILE_PROCESS_ERROR_MSG
+        );
+    }
+
+    /**
+     * 查询任务状态
+     *
+     * @param taskId 任务ID
+     * @return 任务信息
+     */
+    @SentinelResource(value = "queryTask", blockHandler = "handleBlock")
+    @ThApiLog(value = "查询任务状态", logParams = false)
+    @GetMapping("/task/{taskId}")
+    public ThResult<?> getTaskStatus(@PathVariable String taskId) {
+        return ThResultHelper.execute(
+                () -> taskFacade.getTaskStatus(taskId)
+        );
+    }
+
+    /**
+     * 取消任务
+     *
+     * @param taskId 任务ID
+     * @return 取消结果
+     */
+    @ThApiLog("取消任务")
+    @PostMapping("/task/{taskId}/cancel")
+    public ThResult<Boolean> cancelTask(@PathVariable String taskId) {
+        return ThResultHelper.execute(
+                () -> taskFacade.cancelTask(taskId)
         );
     }
 
@@ -61,5 +99,13 @@ public class ThTextPreprocessController {
         return ThResultHelper.execute(
                 () -> textPreprocessService.getSupportedFileTypes()
         );
+    }
+
+    /**
+     * 限流降级处理
+     */
+    public ThResult<?> handleBlock(Exception e) {
+        log.warn("请求被限流: {}", e.getMessage());
+        return ThResult.error("系统繁忙，请稍后重试");
     }
 }

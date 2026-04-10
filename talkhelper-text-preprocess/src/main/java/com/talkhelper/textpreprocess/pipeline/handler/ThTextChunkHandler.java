@@ -1,10 +1,13 @@
 package com.talkhelper.textpreprocess.pipeline.handler;
 
+import com.talkhelper.common.constant.ThConstants;
 import com.talkhelper.common.enums.ThTextChunkStrategy;
+import com.talkhelper.textpreprocess.dto.ThTextChunkConfig;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessContext;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessHandler;
 import com.talkhelper.textpreprocess.strategy.chunk.ThChapterChunkStrategy;
 import com.talkhelper.textpreprocess.strategy.chunk.ThFixedChunkStrategy;
+import com.talkhelper.textpreprocess.vo.ThTextChunkVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -41,14 +44,14 @@ public class ThTextChunkHandler implements ThTextProcessHandler {
         log.info("[{}] 开始文本分块", getName());
 
         // 获取分块配置
-        String strategyType = context.getRequest() != null && context.getRequest().getChunkConfig() != null
-                ? context.getRequest().getChunkConfig().getStrategy()
+        ThTextChunkStrategy strategy = context.getRequest() != null && context.getRequest().getChunkStrategy() != null
+                ? context.getRequest().getChunkStrategy()
                 : ThTextChunkStrategy.FIXED;
 
         // 根据策略类型选择分块器
         List<ThTextProcessContext.TextChunk> chunks;
         
-        if (ThTextChunkStrategy.CHAPTER.equals(strategyType)) {
+        if (ThTextChunkStrategy.CHAPTER.equals(strategy)) {
             chunks = chunkByChapter(context);
         } else {
             chunks = chunkByFixed(context);
@@ -63,15 +66,22 @@ public class ThTextChunkHandler implements ThTextProcessHandler {
      * 按固定大小分块
      */
     private List<ThTextProcessContext.TextChunk> chunkByFixed(ThTextProcessContext context) {
-        Integer chunkSize = context.getRequest() != null && context.getRequest().getChunkConfig() != null
-                ? context.getRequest().getChunkConfig().getChunkSize()
-                : 1000;
+        Integer chunkSize = context.getRequest() != null && context.getRequest().getMaxChunkSize() != null
+                ? context.getRequest().getMaxChunkSize()
+                : ThConstants.DEFAULT_MAX_CHUNK_SIZE;
         
-        Integer overlap = context.getRequest() != null && context.getRequest().getChunkConfig() != null
-                ? context.getRequest().getChunkConfig().getOverlap()
-                : 200;
+        Integer overlap = ThConstants.DEFAULT_OVERLAP_SIZE;
 
-        List<String> textChunks = fixedChunkStrategy.chunk(context.getCleanedText(), chunkSize, overlap);
+        ThTextChunkConfig chunkConfig = ThTextChunkConfig.builder()
+                .strategy(ThTextChunkStrategy.FIXED)
+                .maxChunkSize(chunkSize)
+                .overlapSize(overlap)
+                .build();
+        
+        List<ThTextChunkVO> textChunkVOs = fixedChunkStrategy.chunk(context.getCleanedText(), chunkConfig);
+        List<String> textChunks = textChunkVOs.stream()
+                .map(ThTextChunkVO::getContent)
+                .collect(Collectors.toList());
         
         return convertToTextChunks(textChunks);
     }
@@ -80,7 +90,10 @@ public class ThTextChunkHandler implements ThTextProcessHandler {
      * 按章节分块
      */
     private List<ThTextProcessContext.TextChunk> chunkByChapter(ThTextProcessContext context) {
-        List<String> textChunks = chapterChunkStrategy.chunk(context.getCleanedText(), null);
+        List<ThTextChunkVO> textChunkVOs = chapterChunkStrategy.chunk(context.getCleanedText(), null);
+        List<String> textChunks = textChunkVOs.stream()
+                .map(ThTextChunkVO::getContent)
+                .collect(Collectors.toList());
         
         return convertToTextChunks(textChunks);
     }

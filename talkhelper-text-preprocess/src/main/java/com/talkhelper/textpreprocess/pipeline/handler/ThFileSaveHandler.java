@@ -1,16 +1,15 @@
 package com.talkhelper.textpreprocess.pipeline.handler;
 
+import com.talkhelper.common.constant.ThConstants;
+import com.talkhelper.common.enums.ThContentSaveStrategy;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessContext;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessHandler;
+import com.talkhelper.textpreprocess.strategy.saver.ThContentSaverFactory;
+import com.talkhelper.textpreprocess.strategy.saver.ThMultiStrategySaverExecutor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 /**
  * 文件保存处理器
@@ -18,9 +17,11 @@ import java.util.UUID;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ThFileSaveHandler implements ThTextProcessHandler {
 
-    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir") + "/talkhelper/uploads/";
+    private final ThContentSaverFactory saverFactory;
+    private final ThMultiStrategySaverExecutor multiStrategyExecutor;
 
     @Override
     public String getName() {
@@ -34,31 +35,29 @@ public class ThFileSaveHandler implements ThTextProcessHandler {
     }
 
     @Override
-    public void handle(ThTextProcessContext context) throws Exception {
+    public void handle(ThTextProcessContext context) {
         MultipartFile file = context.getFile();
         
         log.info("[{}] 开始保存文件: {}", getName(), file.getOriginalFilename());
 
-        // 创建临时目录
-        File tempDir = new File(TEMP_DIR);
-        if (!tempDir.exists()) {
-            tempDir.mkdirs();
-        }
+        // 获取保存策略列表（默认使用本地文件保存）
+        ThContentSaveStrategy[] strategies = context.getRequest() != null && context.getRequest().getSaveStrategies() != null
+                ? context.getRequest().getSaveStrategies()
+                : new ThContentSaveStrategy[]{ThContentSaveStrategy.LOCAL_FILE};
 
-        // 生成唯一文件名
-        String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename != null && originalFilename.contains(".")
-                ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                : "";
-        String uniqueFilename = UUID.randomUUID().toString() + extension;
+        // 使用多策略执行器保存文件
+        multiStrategyExecutor.execute(
+                strategies,
+                saver -> {
+                    String savedPath = saver.save(null, file);
+                    // 将第一个保存路径存入上下文
+                    if (context.getFilePath() == null) {
+                        context.setFilePath(savedPath);
+                    }
+                },
+                ThConstants.ACTION_FILE_SAVE
+        );
         
-        // 保存文件
-        Path filePath = Paths.get(TEMP_DIR + uniqueFilename);
-        Files.write(filePath, file.getBytes());
-
-        // 将文件路径存入上下文
-        context.setFilePath(filePath.toString());
-        
-        log.info("[{}] 文件保存成功: {}", getName(), filePath);
+        log.info("[{}] 文件保存完成，主路径: {}", getName(), context.getFilePath());
     }
 }

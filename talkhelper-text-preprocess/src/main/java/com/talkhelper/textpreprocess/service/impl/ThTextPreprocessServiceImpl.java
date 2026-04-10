@@ -1,5 +1,8 @@
 package com.talkhelper.textpreprocess.service.impl;
 
+import com.talkhelper.common.constant.ThConstants;
+import com.talkhelper.common.constant.ThLogConstants;
+import com.talkhelper.common.enums.ThFileType;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessContext;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessPipeline;
@@ -9,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
 
 /**
  * 文本预处理服务实现
@@ -30,39 +35,39 @@ public class ThTextPreprocessServiceImpl implements ThTextPreprocessService {
     public ThPreprocessResultVO uploadAndProcessWithConfig(ThFileUploadRequest request) {
         try {
             // 1. 检测文件类型
-            String fileType = detectFileType(request.getFile());
+            ThFileType fileType = detectFileType(request.getFile());
             request.setFileType(fileType);
 
             // 2. 构建处理上下文
             ThTextProcessContext context = ThTextProcessContext.builder()
                     .file(request.getFile())
                     .request(request)
-                    .fileType(fileType)
+                    .fileType(fileType.getCode())
                     .build();
 
             // 3. 执行管道处理
             pipeline.execute(context);
 
             // 4. 返回结果
-            log.info("文件处理完成: {}", request.getFile().getOriginalFilename());
+            log.info(ThLogConstants.FILE_PROCESS_COMPLETE, request.getFile().getOriginalFilename());
             return context.getResult();
-
         } catch (Exception e) {
-            log.error("文件处理失败: {}", request.getFile().getOriginalFilename(), e);
+            log.error(ThLogConstants.FILE_PROCESS_FAILED, request.getFile().getOriginalFilename(), e);
             return buildErrorResult(request.getFile(), e.getMessage());
         }
     }
 
     @Override
     public String[] getSupportedFileTypes() {
-        // TODO: 从管道处理器中获取支持的文件类型
-        return new String[]{"txt", "md", "html", "pdf", "docx", "epub"};
+        return Arrays.stream(ThFileType.values())
+                .map(ThFileType::getCode)
+                .toArray(String[]::new);
     }
 
     /**
      * 检测文件类型
      */
-    private String detectFileType(MultipartFile file) {
+    private ThFileType detectFileType(MultipartFile file) {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             throw new IllegalArgumentException("文件名不能为空");
@@ -74,40 +79,29 @@ public class ThTextPreprocessServiceImpl implements ThTextPreprocessService {
         }
 
         String extension = filename.substring(dotIndex + 1).toLowerCase();
-
-        // 映射常见扩展名
-        if ("txt".equals(extension)) {
-            return "txt";
-        } else if ("md".equals(extension) || "markdown".equals(extension)) {
-            return "md";
-        } else if ("html".equals(extension) || "htm".equals(extension)) {
-            return "html";
-        } else if ("pdf".equals(extension)) {
-            return "pdf";
-        } else if ("docx".equals(extension)) {
-            return "docx";
-        } else if ("epub".equals(extension)) {
-            return "epub";
-        } else {
-            throw new UnsupportedOperationException("不支持的文件类型: " + extension);
-        }
+        
+        // 使用枚举验证并返回
+        return ThFileType.fromCode(extension);
     }
 
     /**
      * 构建错误结果
      */
     private ThPreprocessResultVO buildErrorResult(MultipartFile file, String errorMessage) {
-        String fileType = "unknown";
+        String fileType = ThConstants.UNKNOWN;
         try {
-            fileType = detectFileType(file);
+            ThFileType detectedType = detectFileType(file);
+            fileType = detectedType.getCode();
         } catch (Exception e) {
             // 忽略
         }
 
+        String fileName = file != null ? file.getOriginalFilename() : ThConstants.UNKNOWN;
+        
         return ThPreprocessResultVO.builder()
-                .originalFileName(file != null ? file.getOriginalFilename() : "unknown")
+                .originalFileName(fileName)
                 .fileType(fileType)
-                .status("failed")
+                .status(ThConstants.STATUS_FAILED)
                 .errorMessage(errorMessage)
                 .build();
     }

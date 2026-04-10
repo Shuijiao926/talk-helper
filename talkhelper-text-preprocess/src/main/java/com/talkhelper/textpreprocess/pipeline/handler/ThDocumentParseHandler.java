@@ -34,7 +34,8 @@ public class ThDocumentParseHandler implements ThTextProcessHandler {
         log.info("[{}] 开始解析文档: {}", getName(), context.getFilePath());
 
         // 使用工厂获取对应的解析器并解析
-        String extractedText = parserFactory.parse(context.getFilePath(), context.getFileType());
+        var parser = parserFactory.getParser(context.getFileType());
+        String extractedText = parser.parse(context.getFilePath());
         
         context.setExtractedText(extractedText);
         

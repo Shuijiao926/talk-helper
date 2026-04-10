@@ -10,9 +10,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * TalkHelper 主启动类
  * AI驱动的播客生成平台
  */
-@SpringBootApplication
 @EnableAsync
 @EnableScheduling
+@SpringBootApplication
 public class TalkHelperApplication {
 
     public static void main(String[] args) {

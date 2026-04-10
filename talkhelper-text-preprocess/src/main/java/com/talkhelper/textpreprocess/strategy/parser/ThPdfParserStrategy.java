@@ -1,6 +1,7 @@
 package com.talkhelper.textpreprocess.strategy.parser;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class ThPdfParserStrategy implements ThDocumentParserStrategy {
         PDDocument document = null;
         try {
             log.info("开始解析PDF文件: {}", filePath);
-            document = PDDocument.load(new File(filePath));
+            document = Loader.loadPDF(new File(filePath));
             
             // 检查是否加密
             if (document.isEncrypted()) {

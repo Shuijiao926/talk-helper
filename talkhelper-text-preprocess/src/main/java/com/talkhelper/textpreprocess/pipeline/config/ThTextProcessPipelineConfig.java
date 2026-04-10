@@ -7,6 +7,8 @@ import com.talkhelper.textpreprocess.strategy.chunk.ThFixedChunkStrategy;
 import com.talkhelper.textpreprocess.strategy.cleaner.ThColloquialCleanerStrategy;
 import com.talkhelper.textpreprocess.strategy.cleaner.ThGeneralCleanerStrategy;
 import com.talkhelper.textpreprocess.strategy.parser.ThDocumentParserFactory;
+import com.talkhelper.textpreprocess.strategy.saver.ThContentSaverFactory;
+import com.talkhelper.textpreprocess.strategy.saver.ThMultiStrategySaverExecutor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +23,8 @@ import org.springframework.core.annotation.Order;
 public class ThTextProcessPipelineConfig {
 
     private final ThDocumentParserFactory parserFactory;
+    private final ThContentSaverFactory saverFactory;
+    private final ThMultiStrategySaverExecutor multiStrategyExecutor;
     private final ThGeneralCleanerStrategy generalCleanerStrategy;
     private final ThColloquialCleanerStrategy colloquialCleanerStrategy;
     private final ThFixedChunkStrategy fixedChunkStrategy;
@@ -32,7 +36,7 @@ public class ThTextProcessPipelineConfig {
     @Bean
     @Order(1)
     public ThFileSaveHandler fileSaveHandler() {
-        return new ThFileSaveHandler();
+        return new ThFileSaveHandler(saverFactory, multiStrategyExecutor);
     }
 
     /**
@@ -77,6 +81,6 @@ public class ThTextProcessPipelineConfig {
     @Bean
     @Order(6)
     public ThResultBuildHandler resultBuildHandler() {
-        return new ThResultBuildHandler();
+        return new ThResultBuildHandler(saverFactory, multiStrategyExecutor);
     }
 }

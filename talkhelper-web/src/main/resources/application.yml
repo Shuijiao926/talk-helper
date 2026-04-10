@@ -14,18 +14,47 @@ spring:
     url: jdbc:mysql://localhost:3306/talkhelper?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
     password: root
-  
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-  
-  ai:
-    alibaba:
-      api-key: ${AI_API_KEY:your-api-key}
 
+  # Redis配置
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:talkhelper123}
+      database: 0
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+          max-wait: 3000ms
+      # 是否启用Redis（开发环境可设为false）
+      enabled: ${REDIS_ENABLED:true}
+
+  ai:
+    dashscope:
+      api-key: sk-5355539b05fc43c598e03cf05fc47117
 server:
   port: 8080
+
+# Actuator监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
 
 mybatis-plus:
   configuration:
@@ -44,3 +73,20 @@ minio:
 jwt:
   secret: ${JWT_SECRET:your-secret-key-change-in-production}
   expiration: 86400000
+
+# 消息队列配置
+talkhelper:
+  mq:
+    type: redis  # 可选: redis, rabbitmq, kafka, rocketmq
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.talkhelper: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/talkhelper.log
+    max-size: 100MB
+    max-history: 30

@@ -80,6 +80,16 @@ public class ThTextProcessContext {
     private Map<String, Object> attributes = new HashMap<>();
 
     /**
+     * 进度回调（可选）
+     */
+    private ThProgressCallback progressCallback;
+
+    /**
+     * 任务ID（用于进度上报）
+     */
+    private String taskId;
+
+    /**
      * 设置扩展属性
      */
     public void setAttribute(String key, Object value) {

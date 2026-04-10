@@ -1,0 +1,140 @@
+version: '3.8'
+
+services:
+  # Redis - 任务队列和缓存
+  redis:
+    image: redis:7-alpine
+    container_name: talkhelper-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --requirepass talkhelper123
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "talkhelper123", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MySQL - 业务数据
+  mysql:
+    image: mysql:8.0
+    container_name: talkhelper-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: talkhelper
+      MYSQL_USER: talkhelper
+      MYSQL_PASSWORD: talkhelper123
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Elasticsearch - 日志存储
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: talkhelper-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Logstash - 日志收集和处理
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: talkhelper-logstash
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    depends_on:
+      - elasticsearch
+
+  # Kibana - 日志可视化
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: talkhelper-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    depends_on:
+      - elasticsearch
+
+  # Prometheus - 监控数据采集
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: talkhelper-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+
+  # Grafana - 监控可视化
+  grafana:
+    image: grafana/grafana:latest
+    container_name: talkhelper-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+volumes:
+  redis-data:
+    driver: local
+  mysql-data:
+    driver: local
+  es-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  talkhelper-network:
+    driver: bridge

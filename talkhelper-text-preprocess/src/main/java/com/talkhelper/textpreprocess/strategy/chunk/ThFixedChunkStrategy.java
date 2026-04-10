@@ -1,5 +1,6 @@
 package com.talkhelper.textpreprocess.strategy.chunk;
 
+import com.talkhelper.common.constant.ThConstants;
 import com.talkhelper.textpreprocess.dto.ThTextChunkConfig;
 import com.talkhelper.textpreprocess.vo.ThTextChunkVO;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,12 @@ public class ThFixedChunkStrategy implements ThTextChunkStrategy {
     @Override
     public List<ThTextChunkVO> chunk(String text, Object config) {
         ThTextChunkConfig chunkConfig = (ThTextChunkConfig) config;
-        int maxChunkSize = chunkConfig.getMaxChunkSize() != null ? chunkConfig.getMaxChunkSize() : 2000;
-        int overlapSize = chunkConfig.getOverlapSize() != null ? chunkConfig.getOverlapSize() : 200;
+        int maxChunkSize = chunkConfig.getMaxChunkSize() != null 
+                ? chunkConfig.getMaxChunkSize() 
+                : ThConstants.DEFAULT_CHUNK_SIZE;
+        int overlapSize = chunkConfig.getOverlapSize() != null 
+                ? chunkConfig.getOverlapSize() 
+                : ThConstants.DEFAULT_OVERLAP_SIZE;
 
         log.info("开始固定长度分块, 文本长度: {}, 每块大小: {}, 重叠: {}", 
                 text.length(), maxChunkSize, overlapSize);
@@ -68,7 +73,7 @@ public class ThFixedChunkStrategy implements ThTextChunkStrategy {
      */
     private int findSentenceBoundary(String text, int position) {
         // 向前查找最近的句子结束符
-        int searchBack = Math.max(0, position - 200);
+        int searchBack = Math.max(0, position - ThConstants.SENTENCE_BOUNDARY_SEARCH_RANGE);
         for (int i = position; i > searchBack; i--) {
             char c = text.charAt(i);
             if (c == '。' || c == '！' || c == '？' || c == '.' || c == '!' || c == '?') {
