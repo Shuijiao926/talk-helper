@@ -34,7 +34,13 @@ spring:
 
   ai:
     dashscope:
-      api-key: sk-5355539b05fc43c598e03cf05fc47117
+      api-key: ${DASHSCOPE_API_KEY:sk-5355539b05fc43c598e03cf05fc47117}
+      chat:
+        options:
+          model: qwen-plus  # 可选: qwen-turbo, qwen-plus, qwen-max
+          temperature: 0.7  # 创造性参数：0-1，越高越有创意
+          top-p: 0.8        # 采样参数
+          max-tokens: 2000  # 最大输出长度
 server:
   port: 8080
 
@@ -78,6 +84,10 @@ jwt:
 talkhelper:
   mq:
     type: redis  # 可选: redis, rabbitmq, kafka, rocketmq
+  
+  # LLM配置
+  llm:
+    provider: dashscope  # 可选: dashscope, openai, claude
 
 # 日志配置
 logging:

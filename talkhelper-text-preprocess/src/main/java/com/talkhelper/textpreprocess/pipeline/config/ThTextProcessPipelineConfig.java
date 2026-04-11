@@ -68,12 +68,8 @@ public class ThTextProcessPipelineConfig {
 
     /**
      * AI处理处理器 - 第5步（可选）
+     * 注意：ThAiProcessHandler已标注@Component，由Spring自动管理
      */
-    @Bean
-    @Order(5)
-    public ThAiProcessHandler aiProcessHandler() {
-        return new ThAiProcessHandler();
-    }
 
     /**
      * 结果构建处理器 - 第6步

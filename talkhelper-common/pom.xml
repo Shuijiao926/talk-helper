@@ -22,6 +22,14 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         
+        <!-- Spring AI Alibaba (可选依赖，运行时提供) -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter</artifactId>
+            <version>1.0.0-M3.2</version>
+            <optional>true</optional>
+        </dependency>
+        
         <!-- MinIO 对象存储 -->
         <dependency>
             <groupId>io.minio</groupId>

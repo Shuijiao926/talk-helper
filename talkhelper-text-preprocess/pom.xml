@@ -23,6 +23,13 @@
             <version>${project.version}</version>
         </dependency>
         
+        <!-- Spring AI Alibaba -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter</artifactId>
+            <version>1.0.0-M3.2</version>
+        </dependency>
+        
         <!-- Jsoup for HTML parsing -->
         <dependency>
             <groupId>org.jsoup</groupId>

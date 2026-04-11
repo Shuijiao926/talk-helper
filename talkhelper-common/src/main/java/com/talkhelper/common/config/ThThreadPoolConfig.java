@@ -1,4 +1,4 @@
-package com.talkhelper.task.config;
+package com.talkhelper.common.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
