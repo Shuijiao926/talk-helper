@@ -1,27 +1,30 @@
 package com.talkhelper.textpreprocess.pipeline.handler;
 
 import com.talkhelper.common.constant.ThConstants;
-import com.talkhelper.common.enums.ThContentSaveStrategy;
+import com.talkhelper.common.storage.ThObjectStorageFactory;
+import com.talkhelper.common.storage.ThObjectStorageStrategy;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessContext;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessHandler;
-import com.talkhelper.textpreprocess.strategy.saver.ThContentSaverFactory;
-import com.talkhelper.textpreprocess.strategy.saver.ThMultiStrategySaverExecutor;
 import com.talkhelper.textpreprocess.vo.ThPreprocessResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * 结果构建处理器
  * 负责将处理过程中的数据组装为最终结果
+ * 注意：此处理器仅负责构建结果对象，不负责内容保存
+ * 内容保存应由调用方根据需要独立调用保存服务
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class ThResultBuildHandler implements ThTextProcessHandler {
 
-    private final ThContentSaverFactory saverFactory;
-    private final ThMultiStrategySaverExecutor multiStrategyExecutor;
+    private final ThObjectStorageFactory storageFactory;
 
     @Override
     public String getName() {
@@ -52,6 +55,48 @@ public class ThResultBuildHandler implements ThTextProcessHandler {
         int textLength = context.getCleanedText() != null ? context.getCleanedText().length() : 0;
         int chunkCount = context.getChunks() != null ? context.getChunks().size() : 0;
 
+        // 获取AI处理后的播客文本
+        String podcastScript = context.getAiResult();
+        
+        // 如果有AI处理结果，保存到MinIO
+        String outputFileName = null;
+        String outputFileUrl = null;
+        Long outputFileSize = null;
+        
+        if (podcastScript != null && !podcastScript.isEmpty()) {
+            try {
+                // 生成输出文件名
+                String baseName = originalFileName.contains(".") 
+                        ? originalFileName.substring(0, originalFileName.lastIndexOf('.')) 
+                        : originalFileName;
+                outputFileName = baseName + "_podcast_script.txt";
+                
+                // 转换为MultipartFile
+                byte[] contentBytes = podcastScript.getBytes(StandardCharsets.UTF_8);
+                MultipartFile scriptFile = new com.talkhelper.common.util.ThSimpleMultipartFile(
+                        "file", 
+                        outputFileName, 
+                        "text/plain", 
+                        contentBytes
+                );
+                
+                // 上传到MinIO
+                ThObjectStorageStrategy storage = storageFactory.getActiveStorage();
+                String taskId = context.getTaskId();
+                String objectKey = "task/" + taskId + "/" + outputFileName;
+                String bucketName = "talkhelper"; // TODO: 从配置读取
+                
+                outputFileUrl = storage.uploadFile(scriptFile, bucketName, objectKey);
+                outputFileSize = (long) contentBytes.length;
+                
+                log.info("[{}] 播客脚本已上传到MinIO: {}", getName(), outputFileUrl);
+                
+            } catch (Exception e) {
+                log.error("[{}] 播客脚本上传MinIO失败", getName(), e);
+                // 不抛出异常，允许流程继续，只是没有输出文件
+            }
+        }
+
         // 构建结果对象
         ThPreprocessResultVO result = ThPreprocessResultVO.builder()
                 .originalFileName(originalFileName)
@@ -60,30 +105,15 @@ public class ThResultBuildHandler implements ThTextProcessHandler {
                 .cleanedText(context.getCleanedText())
                 .textLength(textLength)
                 .chunkCount(chunkCount)
+                .aiResult(podcastScript)
+                .outputFileName(outputFileName)
+                .outputFileUrl(outputFileUrl)
                 .status(ThConstants.STATUS_SUCCESS)
                 .build();
 
         context.setResult(result);
         
-        // 如果需要保存分块后的文本到多个位置，使用多策略执行器
-        if (context.getChunks() != null && !context.getChunks().isEmpty()) {
-            ThContentSaveStrategy[] strategies = context.getRequest() != null 
-                    ? context.getRequest().getSaveStrategies() 
-                    : new ThContentSaveStrategy[]{ThContentSaveStrategy.LOCAL_FILE};
-            
-            // 使用带过滤的执行器，跳过本地文件策略（文件已在 ThFileSaveHandler 中保存）
-            multiStrategyExecutor.executeWithFilter(
-                    strategies,
-                    saver -> {
-                        log.info("开始保存 {} 个文本块", context.getChunks().size());
-                        context.getChunks().forEach(chunk -> saver.save(chunk.getContent(), null));
-                    },
-                    ThConstants.ACTION_CHUNK_TEXT_SAVE,
-                    ThContentSaveStrategy.LOCAL_FILE
-            );
-        }
-        
-        log.info("[{}] 结果构建完成: 文件名={}, 文本长度={}, 分块数={}", 
-                getName(), originalFileName, textLength, chunkCount);
+        log.info("[{}] 结果构建完成: 文件名={}, 文本长度={}, 分块数={}, 输出文件={}", 
+                getName(), originalFileName, textLength, chunkCount, outputFileName);
     }
 }

@@ -1,9 +1,8 @@
 package com.talkhelper.task.mq;
 
+import com.talkhelper.common.util.ThRedisUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -16,8 +15,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class ThRedisMessageQueue implements ThMessageQueue {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final RedisConnectionFactory connectionFactory;
+    private final ThRedisUtils redisUtils;
     
     private static final String TASK_QUEUE_KEY = "task:queue";
     private volatile boolean available = false;
@@ -33,15 +31,11 @@ public class ThRedisMessageQueue implements ThMessageQueue {
             return true;
         }
         
-        try {
-            connectionFactory.getConnection().ping();
-            available = true;
-            return true;
-        } catch (Exception e) {
-            available = false;
-            log.debug("Redis不可用: {}", e.getMessage());
-            return false;
+        available = redisUtils.isAvailable();
+        if (!available) {
+            log.debug("Redis不可用");
         }
+        return available;
     }
 
     @Override
@@ -50,7 +44,7 @@ public class ThRedisMessageQueue implements ThMessageQueue {
             log.warn("Redis不可用，任务发送失败: {}", taskId);
             throw new IllegalStateException("Redis消息队列不可用");
         }
-        redisTemplate.opsForList().rightPush(TASK_QUEUE_KEY, taskId);
+        redisUtils.rightPush(TASK_QUEUE_KEY, taskId);
         log.debug("任务已发送到Redis队列: {}", taskId);
     }
 
@@ -61,7 +55,7 @@ public class ThRedisMessageQueue implements ThMessageQueue {
         }
         
         try {
-            Object taskId = redisTemplate.opsForList().leftPop(TASK_QUEUE_KEY, timeoutSeconds, TimeUnit.SECONDS);
+            Object taskId = redisUtils.leftPop(TASK_QUEUE_KEY, timeoutSeconds, TimeUnit.SECONDS);
             return taskId != null ? taskId.toString() : null;
         } catch (Exception e) {
             log.error("从Redis队列接收任务失败", e);

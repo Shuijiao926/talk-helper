@@ -3,6 +3,8 @@ package com.talkhelper.textpreprocess.strategy.parser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -26,6 +28,23 @@ public class ThMarkdownParserStrategy implements ThDocumentParserStrategy {
             return text;
         } catch (Exception e) {
             log.error("Markdown文件解析失败: {}", filePath, e);
+            throw new RuntimeException("Markdown文件解析失败: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String parse(InputStream inputStream, String fileName) {
+        try {
+            log.info("开始从输入流解析Markdown文件: {}", fileName);
+            String markdownContent = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            
+            // 移除Markdown标记
+            String text = removeMarkdownSyntax(markdownContent);
+            
+            log.info("Markdown文件解析完成, 长度: {}", text.length());
+            return text;
+        } catch (Exception e) {
+            log.error("Markdown文件解析失败: {}", fileName, e);
             throw new RuntimeException("Markdown文件解析失败: " + e.getMessage(), e);
         }
     }

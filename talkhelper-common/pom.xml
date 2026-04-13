@@ -22,11 +22,42 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         
-        <!-- Spring AI Alibaba (可选依赖，运行时提供) -->
+        <!-- Spring AOP（支持切面编程） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        
+        <!-- Spring Data Redis（缓存支持） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        
+        <!-- Caffeine 本地缓存 -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+        
+        <!-- MyBatis Plus（Entity基类和自动填充需要） -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <optional>true</optional>
+        </dependency>
+        
+        <!-- Spring AI Alibaba Agent Framework -->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter</artifactId>
-            <version>1.0.0-M3.2</version>
+            <artifactId>spring-ai-alibaba-agent-framework</artifactId>
+            <optional>true</optional>
+        </dependency>
+        
+        <!-- DashScope ChatModel 支持 -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
             <optional>true</optional>
         </dependency>
         
@@ -35,6 +66,20 @@
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
             <version>8.5.7</version>
+        </dependency>
+        
+        <!-- FFmpeg Java封装（音频处理） -->
+        <dependency>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-core</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+        
+        <!-- 平台特定的FFmpeg二进制文件（根据操作系统选择） -->
+        <dependency>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-nativebin-win64</artifactId>
+            <version>3.3.1</version>
         </dependency>
         
         <dependency>

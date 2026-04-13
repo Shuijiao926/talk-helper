@@ -1,4 +1,4 @@
-package com.talkhelper.web.annotation;
+package com.talkhelper.common.annotation;
 
 import java.lang.annotation.*;
 

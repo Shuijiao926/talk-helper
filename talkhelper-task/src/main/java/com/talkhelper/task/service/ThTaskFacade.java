@@ -3,6 +3,8 @@ package com.talkhelper.task.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talkhelper.common.constant.ThConstants;
+import com.talkhelper.task.pipeline.ThTaskCreateContext;
+import com.talkhelper.task.pipeline.ThTaskCreatePipeline;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,8 @@ import java.util.Map;
 public class ThTaskFacade {
 
     private final ObjectMapper objectMapper;
-    private final ThAsyncTaskService taskService;
+    private final ThTaskCreatePipeline taskCreatePipeline;
+    private final ThAsyncTaskService taskService;  // 用于查询和取消任务
 
     /**
      * 创建文本预处理任务（简单上传）
@@ -33,25 +36,23 @@ public class ThTaskFacade {
      */
     public Map<String, String> createTextPreprocessTask(MultipartFile file, String userId) {
         try {
-            // 1. 构建请求对象
-            ThFileUploadRequest request = ThFileUploadRequest.builder()
+            // 1. 构建上下文
+            ThTaskCreateContext context = ThTaskCreateContext.builder()
                     .file(file)
+                    .userId(resolveUserId(userId))
+                    .taskType("text-preprocess")
                     .build();
 
-            // 2. 序列化请求数据
-            String requestData = serializeRequest(request);
+            // 2. 执行Pipeline (自动完成: 序列化、上传MinIO、创建任务)
+            taskCreatePipeline.execute(context);
 
-            // 3. 创建异步任务
-            String taskId = taskService.createTask(
-                    resolveUserId(userId),
-                    "text-preprocess",
-                    requestData,
-                    file.getOriginalFilename(),
-                    file.getSize()
-            );
+            // 3. 检查结果
+            if (!context.isSuccess()) {
+                throw new RuntimeException("任务创建失败: " + context.getErrorMessage());
+            }
 
             // 4. 返回任务信息
-            return buildTaskResponse(taskId);
+            return buildTaskResponse(context.getTaskId());
 
         } catch (Exception e) {
             log.error("创建文本预处理任务失败", e);
@@ -68,28 +69,26 @@ public class ThTaskFacade {
      */
     public Map<String, String> createTextPreprocessTaskWithConfig(ThFileUploadRequest request, String userId) {
         try {
-            // 1. 提取文件信息（在序列化前）
+            // 1. 提取文件
             MultipartFile file = request.getFile();
-            String fileName = file != null ? file.getOriginalFilename() : ThConstants.UNKNOWN;
-            Long fileSize = file != null ? file.getSize() : 0L;
 
-            // 2. 清除file字段（避免序列化问题）
-            request.setFile(null);
+            // 2. 构建上下文
+            ThTaskCreateContext context = ThTaskCreateContext.builder()
+                    .file(file)
+                    .userId(resolveUserId(userId))
+                    .taskType("text-preprocess")
+                    .build();
 
-            // 3. 序列化请求数据
-            String requestData = serializeRequest(request);
+            // 3. 执行Pipeline (自动完成: 序列化、上传MinIO、创建任务)
+            taskCreatePipeline.execute(context);
 
-            // 4. 创建异步任务
-            String taskId = taskService.createTask(
-                    resolveUserId(userId),
-                    "text-preprocess",
-                    requestData,
-                    fileName,
-                    fileSize
-            );
+            // 4. 检查结果
+            if (!context.isSuccess()) {
+                throw new RuntimeException("任务创建失败: " + context.getErrorMessage());
+            }
 
             // 5. 返回任务信息
-            return buildTaskResponse(taskId);
+            return buildTaskResponse(context.getTaskId());
 
         } catch (Exception e) {
             log.error("创建文本预处理任务失败", e);
@@ -126,13 +125,6 @@ public class ThTaskFacade {
     }
 
     // ==================== 私有辅助方法 ====================
-
-    /**
-     * 序列化请求对象
-     */
-    private String serializeRequest(Object request) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(request);
-    }
 
     /**
      * 解析用户ID（临时实现，后续从JWT获取）

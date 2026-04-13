@@ -32,7 +32,7 @@ xxx            mysql:8.0        Up (healthy)   0.0.0.0:3306->3306/tcp   talkhelp
 docker exec -it talkhelper-mysql mysql -uroot -proot123
 
 # 执行建表SQL
-source /path/to/talkhelper-task/src/main/resources/db/migration/V1__create_task_table.sql
+source /path/to/talkhelper-task/src/main/resources/db/migration/V1.0.0
 ```
 
 或者使用Navicat/DataGrip等工具执行SQL文件。

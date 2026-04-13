@@ -34,9 +34,16 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         
+        <!-- Spring AI Alibaba Agent Framework -->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter</artifactId>
+            <artifactId>spring-ai-alibaba-agent-framework</artifactId>
+        </dependency>
+        
+        <!-- DashScope ChatModel 支持 -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
         </dependency>
         
         <dependency>

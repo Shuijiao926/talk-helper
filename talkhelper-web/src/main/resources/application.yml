@@ -1,42 +1,38 @@
+# ==================== 应用基础配置（固定不变）====================
+
 spring:
   application:
     name: talkhelper
-  
   # 文件上传配置
   servlet:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
       enabled: true
-  
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/talkhelper?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: root
-    password: root
-
-  # Redis配置
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:talkhelper123}
-      database: 0
-      timeout: 3000ms
-      lettuce:
-        pool:
-          max-active: 50
-          max-idle: 20
-          min-idle: 5
-          max-wait: 3000ms
-      # 是否启用Redis（开发环境可设为false）
-      enabled: ${REDIS_ENABLED:true}
-
+  profiles:
+    active: local
+  # Spring AI Alibaba DashScope配置
   ai:
     dashscope:
-      api-key: ${DASHSCOPE_API_KEY:sk-5355539b05fc43c598e03cf05fc47117}
-server:
-  port: 8080
+      api-key: sk-5355539b05fc43c598e03cf05fc47117
+      base-url: https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+      chat:
+        options:
+          model: qwen3.6-plus
+
+# MyBatis Plus配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-change-in-production}
+  expiration: 86400000
 
 # Actuator监控配置
 management:
@@ -56,32 +52,24 @@ management:
     tags:
       application: ${spring.application.name}
 
-mybatis-plus:
-  configuration:
-    map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  global-config:
-    db-config:
-      id-type: auto
-
-minio:
-  endpoint: http://localhost:9000
-  access-key: minioadmin
-  secret-key: minioadmin
-  bucket-name: talkhelper
-
-jwt:
-  secret: ${JWT_SECRET:your-secret-key-change-in-production}
-  expiration: 86400000
-
-# 消息队列配置
+# 业务配置
 talkhelper:
+  # 消息队列配置
   mq:
     type: redis  # 可选: redis, rabbitmq, kafka, rocketmq
-  
   # LLM配置
   llm:
     provider: dashscope  # 可选: dashscope, openai, claude
+  # 对象存储通用配置
+  storage:
+    default-bucket: talkhelper
+    active-type: minio  # 可选: minio, local, s3
+    # MinIO专用配置
+    minio:
+      endpoint: http://127.0.0.1:9000
+      access-key: minioadmin
+      secret-key: minioadmin
+      bucket-name: talkhelper
 
 # 日志配置
 logging:

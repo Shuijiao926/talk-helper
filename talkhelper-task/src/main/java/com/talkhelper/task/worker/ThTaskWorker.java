@@ -132,13 +132,23 @@ public class ThTaskWorker implements CommandLineRunner {
             taskService.updateProgress(taskId, 10, "正在解析文档");
 
             // 6. 执行文本预处理（同步）
-            // TODO: 这里需要改造为支持进度回调
             var result = preprocessService.uploadAndProcessWithConfig(request);
 
             // 7. 更新进度：完成
             taskService.updateProgress(taskId, 90, "正在生成结果");
 
-            // 8. 完成任务
+            // 8. 更新输出文件信息到数据库
+            if (result.getOutputFileUrl() != null) {
+                task.setOutputFileName(result.getOutputFileName());
+                task.setOutputFileUrl(result.getOutputFileUrl());
+                // 计算文件大小(AI结果的字节数)
+                if (result.getAiResult() != null) {
+                    task.setOutputFileSize((long) result.getAiResult().getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
+                }
+                log.info("任务输出文件信息: name={}, url={}", result.getOutputFileName(), result.getOutputFileUrl());
+            }
+
+            // 9. 完成任务
             String resultJson = objectMapper.writeValueAsString(result);
             taskService.completeTask(taskId, resultJson);
 

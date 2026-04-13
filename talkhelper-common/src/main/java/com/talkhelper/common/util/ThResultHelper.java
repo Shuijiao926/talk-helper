@@ -1,4 +1,4 @@
-package com.talkhelper.web.util;
+package com.talkhelper.common.util;
 
 import com.talkhelper.common.constant.ThLogConstants;
 import com.talkhelper.common.result.ThResult;
@@ -9,44 +9,22 @@ import java.util.function.Supplier;
 /**
  * 统一响应工具类
  * 封装Controller层的通用响应逻辑，提高代码内聚性
+ * 注意：不再捕获异常，异常交由全局异常处理器处理
  */
 @Slf4j
 public class ThResultHelper {
 
     /**
      * 执行业务逻辑并返回统一结果
-     * 自动处理异常和状态判断
+     * 不捕获异常，让异常自然抛出到全局异常处理器
      *
      * @param businessLogic 业务逻辑Supplier
      * @param <T>           返回数据类型
      * @return 统一响应结果
      */
     public static <T> ThResult<T> execute(Supplier<T> businessLogic) {
-        try {
-            T result = businessLogic.get();
-            return wrapResult(result);
-        } catch (Exception e) {
-            log.error(ThLogConstants.BUSINESS_EXCEPTION, e);
-            return ThResult.error("操作失败: " + e.getMessage());
-        }
-    }
-
-    /**
-     * 执行业务逻辑并返回统一结果（带自定义错误消息）
-     *
-     * @param businessLogic 业务逻辑Supplier
-     * @param errorMessage  自定义错误消息前缀
-     * @param <T>           返回数据类型
-     * @return 统一响应结果
-     */
-    public static <T> ThResult<T> execute(Supplier<T> businessLogic, String errorMessage) {
-        try {
-            T result = businessLogic.get();
-            return wrapResult(result);
-        } catch (Exception e) {
-            log.error(ThLogConstants.BUSINESS_EXCEPTION, e);
-            return ThResult.error(errorMessage + ": " + e.getMessage());
-        }
+        T result = businessLogic.get();
+        return wrapResult(result);
     }
 
     /**

@@ -45,6 +45,21 @@ public class ThPreprocessResultVO {
     private Integer chunkCount;
 
     /**
+     * AI处理后的播客脚本
+     */
+    private String aiResult;
+
+    /**
+     * 输出文件名(播客脚本文本文件)
+     */
+    private String outputFileName;
+
+    /**
+     * 输出文件MinIO URL
+     */
+    private String outputFileUrl;
+
+    /**
      * 处理状态: success, failed
      */
     private String status;

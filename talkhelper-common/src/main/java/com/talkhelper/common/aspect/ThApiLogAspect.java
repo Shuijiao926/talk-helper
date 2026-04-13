@@ -1,6 +1,6 @@
-package com.talkhelper.web.aspect;
+package com.talkhelper.common.aspect;
 
-import com.talkhelper.web.annotation.ThApiLog;
+import com.talkhelper.common.annotation.ThApiLog;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -25,7 +25,7 @@ public class ThApiLogAspect {
     /**
      * 环绕通知，拦截带有 @ThApiLog 注解的方法
      */
-    @Around("@annotation(com.talkhelper.web.annotation.ThApiLog)")
+    @Around("@annotation(com.talkhelper.common.annotation.ThApiLog)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         // 获取方法签名和注解
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();

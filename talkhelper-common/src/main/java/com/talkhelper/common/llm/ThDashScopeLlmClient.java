@@ -1,5 +1,6 @@
 package com.talkhelper.common.llm;
 
+import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 import com.talkhelper.common.dto.ThLlmRequest;
 import com.talkhelper.common.dto.ThLlmResponse;

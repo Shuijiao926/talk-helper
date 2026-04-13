@@ -81,6 +81,11 @@ public class ThConstants {
     public static final String ACTION_FILE_SAVE = "文件保存";
     
     /**
+     * 动作名称 - 文本保存
+     */
+    public static final String ACTION_TEXT_SAVE = "文本保存";
+    
+    /**
      * 动作名称 - 分块文本保存
      */
     public static final String ACTION_CHUNK_TEXT_SAVE = "分块文本保存";

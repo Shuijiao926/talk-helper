@@ -1,11 +1,10 @@
-package com.talkhelper.task.cache;
+package com.talkhelper.common.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.talkhelper.common.util.ThRedisUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -19,7 +18,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class ThMultiLevelCache {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final ThRedisUtils redisUtils;
 
     // L1缓存：Caffeine本地缓存（热点数据，最大1000条，过期时间5分钟）
     private final Cache<String, Object> l1Cache = Caffeine.newBuilder()
@@ -47,7 +46,7 @@ public class ThMultiLevelCache {
 
         // L2: 查询Redis分布式缓存
         String redisKey = "cache:" + key;
-        cached = redisTemplate.opsForValue().get(redisKey);
+        cached = redisUtils.get(redisKey);
         if (cached != null) {
             log.debug("L2缓存命中: {}", key);
             // 回填L1缓存
@@ -61,7 +60,7 @@ public class ThMultiLevelCache {
         
         if (data != null) {
             // 写入L2缓存（Redis）
-            redisTemplate.opsForValue().set(redisKey, data, ttl, TimeUnit.SECONDS);
+            redisUtils.set(redisKey, data, ttl, TimeUnit.SECONDS);
             // 写入L1缓存（Caffeine）
             l1Cache.put(key, data);
             log.debug("数据已缓存: {}, TTL={}s", key, ttl);
@@ -86,7 +85,7 @@ public class ThMultiLevelCache {
         
         // 写入L2
         String redisKey = "cache:" + key;
-        redisTemplate.opsForValue().set(redisKey, value, ttl, TimeUnit.SECONDS);
+        redisUtils.set(redisKey, value, ttl, TimeUnit.SECONDS);
         
         log.debug("缓存已更新: {}", key);
     }
@@ -100,7 +99,7 @@ public class ThMultiLevelCache {
         
         // 删除L2
         String redisKey = "cache:" + key;
-        redisTemplate.delete(redisKey);
+        redisUtils.delete(redisKey);
         
         log.debug("缓存已删除: {}", key);
     }
@@ -110,7 +109,7 @@ public class ThMultiLevelCache {
      */
     public void evictPattern(String pattern) {
         String redisPattern = "cache:" + pattern;
-        redisTemplate.keys(redisPattern).forEach(redisTemplate::delete);
+        redisUtils.deleteByPattern(redisPattern);
         
         // Caffeine不支持通配符删除，清空全部（简单实现）
         l1Cache.invalidateAll();

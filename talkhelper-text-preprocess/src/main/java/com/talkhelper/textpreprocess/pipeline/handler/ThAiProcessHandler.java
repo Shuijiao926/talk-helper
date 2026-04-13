@@ -29,7 +29,7 @@ public class ThAiProcessHandler implements ThTextProcessHandler {
 
     private final ThLlmService llmService; // 通用LLM服务
     private final ThPodcastPromptTemplateService promptTemplateService; // 提示词模板服务
-    private final ExecutorService cpuIntensiveExecutor; // CPU密集型线程池
+    private final ExecutorService ioIntensiveExecutor; // IO密集型线程池(用于LLM调用)
 
     @Override
     public String getName() {
@@ -39,8 +39,7 @@ public class ThAiProcessHandler implements ThTextProcessHandler {
     @Override
     public boolean shouldHandle(ThTextProcessContext context) {
         // 如果有分块且需要AI处理，则执行
-        return context.getChunks() != null && !context.getChunks().isEmpty()
-                && Boolean.TRUE.equals(context.getAttribute("needAiProcess"));
+        return context.getChunks() != null && !context.getChunks().isEmpty();
     }
 
     @Override
@@ -57,7 +56,7 @@ public class ThAiProcessHandler implements ThTextProcessHandler {
 
             int totalChunks = context.getChunks().size();
             
-            // 2. 并行处理所有分块（使用CompletableFuture）
+            // 2. 并行处理所有分块（使用IO线程池，因为LLM调用是IO密集型）
             log.info("[{}] 启动并行处理, 总分块数: {}", getName(), totalChunks);
             
             List<CompletableFuture<ChunkResult>> futures = IntStream.range(0, totalChunks)
@@ -93,11 +92,17 @@ public class ThAiProcessHandler implements ThTextProcessHandler {
                             log.error("[{}] 分块 {}/{} 处理异常: {}", getName(), i + 1, totalChunks, e.getMessage(), e);
                             return new ChunkResult(i, "[分块" + (i + 1) + "处理异常: " + e.getMessage() + "]", false, e.getMessage());
                         }
-                    }, cpuIntensiveExecutor))
+                    }, ioIntensiveExecutor))  // 使用IO线程池
                     .collect(Collectors.toList());
 
-            // 5. 等待所有任务完成
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            // 5. 等待所有任务完成（设置超时时间：每个分块最多60秒）
+            try {
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                        .get(60 * totalChunks, java.util.concurrent.TimeUnit.SECONDS);
+            } catch (java.util.concurrent.TimeoutException e) {
+                log.error("[{}] AI处理超时，总分块数: {}", getName(), totalChunks, e);
+                throw new RuntimeException("AI处理超时: " + e.getMessage(), e);
+            }
 
             // 6. 收集结果并按顺序合并
             List<ChunkResult> results = futures.stream()

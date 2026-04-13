@@ -23,11 +23,16 @@
             <version>${project.version}</version>
         </dependency>
         
-        <!-- Spring AI Alibaba -->
+        <!-- Spring AI Alibaba Agent Framework -->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter</artifactId>
-            <version>1.0.0-M3.2</version>
+            <artifactId>spring-ai-alibaba-agent-framework</artifactId>
+        </dependency>
+        
+        <!-- DashScope ChatModel 支持 -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
         </dependency>
         
         <!-- Jsoup for HTML parsing -->

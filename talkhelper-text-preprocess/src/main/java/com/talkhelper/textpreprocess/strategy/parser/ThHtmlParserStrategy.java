@@ -5,6 +5,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -35,6 +37,29 @@ public class ThHtmlParserStrategy implements ThDocumentParserStrategy {
             return text;
         } catch (Exception e) {
             log.error("HTML文件解析失败: {}", filePath, e);
+            throw new RuntimeException("HTML文件解析失败: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String parse(InputStream inputStream, String fileName) {
+        try {
+            log.info("开始从输入流解析HTML文件: {}", fileName);
+            String htmlContent = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            
+            // 使用Jsoup解析HTML
+            org.jsoup.nodes.Document doc = Jsoup.parse(htmlContent);
+            
+            // 清理HTML标签,保留基本格式
+            String cleanHtml = Jsoup.clean(doc.body().html(), Safelist.relaxed());
+            
+            // 再次解析为纯文本
+            String text = Jsoup.parse(cleanHtml).text();
+            
+            log.info("HTML文件解析完成, 长度: {}", text.length());
+            return text;
+        } catch (Exception e) {
+            log.error("HTML文件解析失败: {}", fileName, e);
             throw new RuntimeException("HTML文件解析失败: " + e.getMessage(), e);
         }
     }

@@ -29,6 +29,13 @@
             <version>${project.version}</version>
         </dependency>
         
+        <!-- 依赖任务模块（用于进度回调） -->
+        <dependency>
+            <groupId>com.talkhelper</groupId>
+            <artifactId>talkhelper-task</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

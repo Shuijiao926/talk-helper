@@ -1,13 +1,13 @@
 package com.talkhelper.web.controller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.talkhelper.common.annotation.ThApiLog;
 import com.talkhelper.common.constant.ThLogConstants;
 import com.talkhelper.common.result.ThResult;
+import com.talkhelper.common.util.ThResultHelper;
 import com.talkhelper.task.service.ThTaskFacade;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
 import com.talkhelper.textpreprocess.service.ThTextPreprocessService;
-import com.talkhelper.web.annotation.ThApiLog;
-import com.talkhelper.web.util.ThResultHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class ThTextPreprocessController {
     private final ThTextPreprocessService textPreprocessService;
 
     /**
-     * 上传文件并处理（异步）
+     * 上传文件并处理
      *
      * @param file 上传的文件
      * @return 任务ID
@@ -39,8 +39,7 @@ public class ThTextPreprocessController {
     @PostMapping("/file/upload")
     public ThResult<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
         return ThResultHelper.execute(
-                () -> taskFacade.createTextPreprocessTask(file, null),
-                ThLogConstants.FILE_PROCESS_ERROR_MSG
+                () -> taskFacade.createTextPreprocessTask(file, null)
         );
     }
 
@@ -54,8 +53,7 @@ public class ThTextPreprocessController {
     @PostMapping("/upload-with-config")
     public ThResult<Map<String, String>> uploadFileWithConfig(ThFileUploadRequest request) {
         return ThResultHelper.execute(
-                () -> taskFacade.createTextPreprocessTaskWithConfig(request, null),
-                ThLogConstants.FILE_PROCESS_ERROR_MSG
+                () -> taskFacade.createTextPreprocessTaskWithConfig(request, null)
         );
     }
 
