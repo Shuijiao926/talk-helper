@@ -21,8 +21,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ThTaskFacade {
 
-    private final ThAsyncTaskService taskService;
     private final ObjectMapper objectMapper;
+    private final ThAsyncTaskService taskService;
 
     /**
      * 创建文本预处理任务（简单上传）

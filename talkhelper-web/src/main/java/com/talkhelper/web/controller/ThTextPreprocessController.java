@@ -25,8 +25,8 @@ import java.util.Map;
 @RequestMapping("/api/text-preprocess")
 public class ThTextPreprocessController {
 
+    private final ThTaskFacade taskFacade;
     private final ThTextPreprocessService textPreprocessService;
-    private final ThTaskFacade taskFacade; // 使用门面服务
 
     /**
      * 上传文件并处理（异步）

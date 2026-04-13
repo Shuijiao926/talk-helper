@@ -25,9 +25,8 @@ public class ThAsyncTaskService {
 
     private final ThTaskMapper taskMapper;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ObjectMapper objectMapper;
-    private final ThMultiLevelCache cache; // 多级缓存
-    private final ThMessageQueueFactory mqFactory; // 消息队列工厂
+    private final ThMultiLevelCache cache;
+    private final ThMessageQueueFactory mqFactory;
 
     // Redis Key前缀
     private static final String TASK_KEY_PREFIX = "task:";

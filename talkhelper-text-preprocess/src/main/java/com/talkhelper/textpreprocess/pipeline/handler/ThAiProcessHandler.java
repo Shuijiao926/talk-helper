@@ -49,7 +49,7 @@ public class ThAiProcessHandler implements ThTextProcessHandler {
 
         try {
             // 1. 获取提示词模板
-            String templateType = (String) context.getAttribute("templateType");
+            String templateType = context.getAttribute("templateType");
             if (templateType == null) {
                 templateType = "standard";
             }
@@ -103,7 +103,7 @@ public class ThAiProcessHandler implements ThTextProcessHandler {
             List<ChunkResult> results = futures.stream()
                     .map(CompletableFuture::join)
                     .sorted((r1, r2) -> Integer.compare(r1.index, r2.index))
-                    .collect(Collectors.toList());
+                    .toList();
 
             StringBuilder mergedResult = new StringBuilder();
             for (int i = 0; i < results.size(); i++) {
