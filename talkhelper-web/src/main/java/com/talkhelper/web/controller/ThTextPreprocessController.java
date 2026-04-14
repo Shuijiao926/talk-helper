@@ -34,7 +34,6 @@ public class ThTextPreprocessController {
      * @param file 上传的文件
      * @return 任务ID
      */
-    @SentinelResource(value = "upload", blockHandler = "handleBlock")
     @ThApiLog("上传文件并处理")
     @PostMapping("/file/upload")
     public ThResult<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {

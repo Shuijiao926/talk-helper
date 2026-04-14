@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Slf4j
 @Component
-@Order(0)
 @RequiredArgsConstructor
 public class ThRequestSerializeHandler implements ThTaskCreateHandler {
 

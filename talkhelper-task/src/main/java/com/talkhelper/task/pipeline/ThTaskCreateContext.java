@@ -1,5 +1,6 @@
 package com.talkhelper.task.pipeline;
 
+import com.talkhelper.common.enums.ThTaskType;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +26,7 @@ public class ThTaskCreateContext {
     /**
      * 任务类型
      */
-    private String taskType;
+    private ThTaskType taskType;
 
     /**
      * 请求数据JSON

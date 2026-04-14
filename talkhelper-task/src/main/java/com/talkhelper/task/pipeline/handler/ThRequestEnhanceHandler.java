@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-@Order(3)
 @RequiredArgsConstructor
 public class ThRequestEnhanceHandler implements ThTaskCreateHandler {
 

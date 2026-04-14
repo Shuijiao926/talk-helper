@@ -96,13 +96,7 @@ public class ThAiProcessHandler implements ThTextProcessHandler {
                     .collect(Collectors.toList());
 
             // 5. 等待所有任务完成（设置超时时间：每个分块最多60秒）
-            try {
-                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                        .get(60 * totalChunks, java.util.concurrent.TimeUnit.SECONDS);
-            } catch (java.util.concurrent.TimeoutException e) {
-                log.error("[{}] AI处理超时，总分块数: {}", getName(), totalChunks, e);
-                throw new RuntimeException("AI处理超时: " + e.getMessage(), e);
-            }
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
             // 6. 收集结果并按顺序合并
             List<ChunkResult> results = futures.stream()

@@ -176,4 +176,30 @@ public class ThFileUtils {
         }
         return dir.isDirectory();
     }
+
+    /**
+     * 将MultipartFile保存到临时文件
+     *
+     * @param file 上传的文件
+     * @return 临时文件路径
+     * @throws Exception 异常
+     */
+    public static Path saveToTempFile(MultipartFile file) throws Exception {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("文件不能为空");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        String suffix = extractFileExtension(originalFilename);
+        if (suffix.isEmpty()) {
+            suffix = ".tmp";
+        }
+
+        Path tempFile = Files.createTempFile("talkhelper_", suffix);
+        file.transferTo(tempFile.toFile());
+
+        log.debug("临时文件创建成功: {}, 大小: {} bytes", tempFile, file.getSize());
+
+        return tempFile;
+    }
 }

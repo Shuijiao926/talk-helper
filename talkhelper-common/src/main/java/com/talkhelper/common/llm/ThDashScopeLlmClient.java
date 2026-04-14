@@ -1,6 +1,5 @@
 package com.talkhelper.common.llm;
 
-import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 import com.talkhelper.common.dto.ThLlmRequest;
 import com.talkhelper.common.dto.ThLlmResponse;
@@ -31,7 +30,7 @@ public class ThDashScopeLlmClient implements ThLlmClient {
             log.debug("调用DashScope模型, Prompt长度: {}", 
                     request.getFinalPrompt() != null ? request.getFinalPrompt().length() : 0);
 
-            // 调用Spring AI Alibaba
+            // 使用Spring注入的ChatModel
             String response = chatModel.call(request.getFinalPrompt());
 
             if (response == null || response.isEmpty()) {

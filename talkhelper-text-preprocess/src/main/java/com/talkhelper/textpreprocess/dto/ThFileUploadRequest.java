@@ -36,10 +36,16 @@ public class ThFileUploadRequest {
     private Boolean colloquialize = true;
 
     /**
+     * 是否进行AI结构化清洗(添加Markdown标题)
+     */
+    @Builder.Default
+    private Boolean aiStructured = true;
+
+    /**
      * 分块策略: chapter, paragraph, fixed
      */
     @Builder.Default
-    private ThTextChunkStrategy chunkStrategy = ThTextChunkStrategy.CHAPTER;
+    private ThTextChunkStrategy chunkStrategy = ThTextChunkStrategy.FIXED;
 
     /**
      * 每块最大字符数(仅在fixed策略下生效)

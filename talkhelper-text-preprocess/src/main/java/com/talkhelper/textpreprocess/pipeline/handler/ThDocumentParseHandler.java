@@ -1,5 +1,7 @@
 package com.talkhelper.textpreprocess.pipeline.handler;
 
+import com.talkhelper.common.util.ThFileUtils;
+import com.talkhelper.common.util.ThFileUtils;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessContext;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessHandler;
 import com.talkhelper.textpreprocess.service.ThContentSaveService;
@@ -24,7 +26,6 @@ import java.nio.file.Paths;
 public class ThDocumentParseHandler implements ThTextProcessHandler {
 
     private final ThDocumentParserFactory parserFactory;
-    private final ThContentSaveService contentSaveService;
 
     @Override
     public String getName() {
@@ -55,7 +56,7 @@ public class ThDocumentParseHandler implements ThTextProcessHandler {
             } catch (UnsupportedOperationException e) {
                 // 如果不支持流式解析，则临时保存到本地后解析
                 log.warn("[{}] 解析器不支持流式解析，临时保存文件: {}", getName(), e.getMessage());
-                Path tempFile = saveToTempFile(context.getFile());
+                Path tempFile = ThFileUtils.saveToTempFile(context.getFile());
                 try {
                     extractedText = parser.parse(tempFile.toString());
                 } finally {
@@ -75,23 +76,5 @@ public class ThDocumentParseHandler implements ThTextProcessHandler {
         context.setExtractedText(extractedText);
         
         log.info("[{}] 文档解析完成, 文本长度: {}", getName(), extractedText.length());
-    }
-
-    /**
-     * 将MultipartFile保存到临时文件
-     */
-    private Path saveToTempFile(MultipartFile file) throws Exception {
-        String originalFilename = file.getOriginalFilename();
-        String suffix = originalFilename != null && originalFilename.contains(".") 
-                ? originalFilename.substring(originalFilename.lastIndexOf('.')) 
-                : ".tmp";
-        
-        Path tempFile = Files.createTempFile("talkhelper_", suffix);
-        file.transferTo(tempFile.toFile());
-        
-        log.debug("[{}] 临时文件创建成功: {}, 大小: {} bytes", 
-                getName(), tempFile, file.getSize());
-        
-        return tempFile;
     }
 }

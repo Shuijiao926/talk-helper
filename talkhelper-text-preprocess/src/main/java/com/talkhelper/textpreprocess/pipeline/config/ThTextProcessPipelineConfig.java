@@ -8,6 +8,7 @@ import com.talkhelper.textpreprocess.service.ThContentSaveService;
 import com.talkhelper.textpreprocess.service.ThPodcastPromptTemplateService;
 import com.talkhelper.textpreprocess.strategy.chunk.ThChapterChunkStrategy;
 import com.talkhelper.textpreprocess.strategy.chunk.ThFixedChunkStrategy;
+import com.talkhelper.textpreprocess.strategy.cleaner.ThAiStructuredCleanerStrategy;
 import com.talkhelper.textpreprocess.strategy.cleaner.ThColloquialCleanerStrategy;
 import com.talkhelper.textpreprocess.strategy.cleaner.ThGeneralCleanerStrategy;
 import com.talkhelper.textpreprocess.strategy.parser.ThDocumentParserFactory;
@@ -31,6 +32,7 @@ public class ThTextProcessPipelineConfig {
     private final ThDocumentParserFactory parserFactory;
     private final ThContentSaveService contentSaveService;
     private final ThGeneralCleanerStrategy generalCleanerStrategy;
+    private final ThAiStructuredCleanerStrategy aiStructuredCleanerStrategy;
     private final ThColloquialCleanerStrategy colloquialCleanerStrategy;
     private final ThFixedChunkStrategy fixedChunkStrategy;
     private final ThChapterChunkStrategy chapterChunkStrategy;
@@ -45,7 +47,7 @@ public class ThTextProcessPipelineConfig {
     @Bean
     @Order(1)
     public ThDocumentParseHandler documentParseHandler() {
-        return new ThDocumentParseHandler(parserFactory, contentSaveService);
+        return new ThDocumentParseHandler(parserFactory);
     }
 
     /**
@@ -54,7 +56,7 @@ public class ThTextProcessPipelineConfig {
     @Bean
     @Order(2)
     public ThTextCleanHandler textCleanHandler() {
-        return new ThTextCleanHandler(generalCleanerStrategy, colloquialCleanerStrategy);
+        return new ThTextCleanHandler(generalCleanerStrategy, aiStructuredCleanerStrategy, colloquialCleanerStrategy);
     }
 
     /**

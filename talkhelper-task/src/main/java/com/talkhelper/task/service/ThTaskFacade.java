@@ -3,6 +3,7 @@ package com.talkhelper.task.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talkhelper.common.constant.ThConstants;
+import com.talkhelper.common.enums.ThTaskType;
 import com.talkhelper.task.pipeline.ThTaskCreateContext;
 import com.talkhelper.task.pipeline.ThTaskCreatePipeline;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
@@ -14,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.talkhelper.common.enums.ThTaskType.TEXT_PROCESS;
+
 /**
  * 任务门面服务（Facade模式）
  * 封装任务创建的复杂逻辑，提供简洁接口给Controller
@@ -23,9 +26,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ThTaskFacade {
 
-    private final ObjectMapper objectMapper;
+    private final ThAsyncTaskService taskService;
     private final ThTaskCreatePipeline taskCreatePipeline;
-    private final ThAsyncTaskService taskService;  // 用于查询和取消任务
 
     /**
      * 创建文本预处理任务（简单上传）
@@ -36,22 +38,18 @@ public class ThTaskFacade {
      */
     public Map<String, String> createTextPreprocessTask(MultipartFile file, String userId) {
         try {
-            // 1. 构建上下文
             ThTaskCreateContext context = ThTaskCreateContext.builder()
                     .file(file)
                     .userId(resolveUserId(userId))
-                    .taskType("text-preprocess")
+                    .taskType(TEXT_PROCESS)
                     .build();
 
-            // 2. 执行Pipeline (自动完成: 序列化、上传MinIO、创建任务)
             taskCreatePipeline.execute(context);
 
-            // 3. 检查结果
             if (!context.isSuccess()) {
                 throw new RuntimeException("任务创建失败: " + context.getErrorMessage());
             }
 
-            // 4. 返回任务信息
             return buildTaskResponse(context.getTaskId());
 
         } catch (Exception e) {
@@ -69,14 +67,11 @@ public class ThTaskFacade {
      */
     public Map<String, String> createTextPreprocessTaskWithConfig(ThFileUploadRequest request, String userId) {
         try {
-            // 1. 提取文件
             MultipartFile file = request.getFile();
-
-            // 2. 构建上下文
             ThTaskCreateContext context = ThTaskCreateContext.builder()
                     .file(file)
                     .userId(resolveUserId(userId))
-                    .taskType("text-preprocess")
+                    .taskType(TEXT_PROCESS)
                     .build();
 
             // 3. 执行Pipeline (自动完成: 序列化、上传MinIO、创建任务)

@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-@Order(4)
 @RequiredArgsConstructor
 public class ThTaskPersistenceHandler implements ThTaskCreateHandler {
 
@@ -39,7 +38,7 @@ public class ThTaskPersistenceHandler implements ThTaskCreateHandler {
             ThTaskEntity task = ThTaskEntity.builder()
                     .taskId(context.getTaskId())
                     .userId(context.getUserId())
-                    .taskType(context.getTaskType())
+                    .taskType(context.getTaskType().name())
                     .status(ThTaskStatus.PENDING.getCode())
                     .progress(0)
                     .currentStage("任务已创建")

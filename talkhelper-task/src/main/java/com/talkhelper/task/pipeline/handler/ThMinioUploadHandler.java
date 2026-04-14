@@ -3,6 +3,7 @@ package com.talkhelper.task.pipeline.handler;
 import com.talkhelper.common.config.ThStorageConfig;
 import com.talkhelper.common.storage.ThObjectStorageFactory;
 import com.talkhelper.common.storage.ThObjectStorageStrategy;
+import com.talkhelper.common.util.ThIdGenerator;
 import com.talkhelper.task.pipeline.ThTaskCreateContext;
 import com.talkhelper.task.pipeline.ThTaskCreateHandler;
 import lombok.RequiredArgsConstructor;
@@ -11,20 +12,17 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.UUID;
-
 /**
  * MinIO文件上传Handler
  * 将文件上传到MinIO,获取访问URL
  */
 @Slf4j
 @Component
-@Order(2)
 @RequiredArgsConstructor
 public class ThMinioUploadHandler implements ThTaskCreateHandler {
 
-    private final ThObjectStorageFactory storageFactory;
     private final ThStorageConfig storageConfig;
+    private final ThObjectStorageFactory storageFactory;
 
     @Override
     public void handle(ThTaskCreateContext context) {
@@ -46,7 +44,7 @@ public class ThMinioUploadHandler implements ThTaskCreateHandler {
             ThObjectStorageStrategy storage = storageFactory.getActiveStorage();
 
             // 生成对象键: task/{taskId}/{fileName}
-            String taskId = generateTaskId();
+            String taskId = ThIdGenerator.generateTaskId();
             String fileName = context.getInputFileName();
             String objectKey = "task/" + taskId + "/" + fileName;
             String bucketName = storageConfig.getDefaultBucket();
@@ -65,13 +63,6 @@ public class ThMinioUploadHandler implements ThTaskCreateHandler {
             context.setSuccess(false);
             context.setErrorMessage("文件上传失败: " + e.getMessage());
         }
-    }
-
-    /**
-     * 生成任务ID
-     */
-    private String generateTaskId() {
-        return UUID.randomUUID().toString().replace("-", "");
     }
 
     @Override

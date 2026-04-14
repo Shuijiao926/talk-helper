@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Slf4j
 @Component
-@Order(1)
 public class ThFileInfoExtractHandler implements ThTaskCreateHandler {
 
     @Override
@@ -35,10 +34,5 @@ public class ThFileInfoExtractHandler implements ThTaskCreateHandler {
         context.setInputFileSize(fileSize);
 
         log.debug("文件信息提取完成: fileName={}, size={}", fileName, fileSize);
-    }
-
-    @Override
-    public int getOrder() {
-        return 0;
     }
 }

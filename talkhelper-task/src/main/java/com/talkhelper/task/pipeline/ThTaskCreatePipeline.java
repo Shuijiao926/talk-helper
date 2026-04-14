@@ -22,8 +22,6 @@ public class ThTaskCreatePipeline {
      * 执行任务创建流程
      */
     public void execute(ThTaskCreateContext context) {
-        log.debug("开始执行任务创建Pipeline, Handler数量: {}", handlers.size());
-
         // 按order排序
         handlers.sort(Comparator.comparingInt(ThTaskCreateHandler::getOrder));
 
