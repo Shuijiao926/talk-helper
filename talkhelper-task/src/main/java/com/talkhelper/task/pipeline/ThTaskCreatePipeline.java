@@ -7,10 +7,6 @@ import org.springframework.stereotype.Component;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * 任务创建Pipeline
- * 按顺序执行各个Handler
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -18,19 +14,14 @@ public class ThTaskCreatePipeline {
 
     private final List<ThTaskCreateHandler> handlers;
 
-    /**
-     * 执行任务创建流程
-     */
     public void execute(ThTaskCreateContext context) {
-        // 按order排序
         handlers.sort(Comparator.comparingInt(ThTaskCreateHandler::getOrder));
 
         for (ThTaskCreateHandler handler : handlers) {
             try {
                 log.debug("执行Handler: {}", handler.getClass().getSimpleName());
-                handler.handle(context);
+                executeWithRetry(handler, context);
 
-                // 如果处理失败,中断流程
                 if (!context.isSuccess() && context.getErrorMessage() != null) {
                     log.error("任务创建失败: {}", context.getErrorMessage());
                     return;
@@ -44,5 +35,33 @@ public class ThTaskCreatePipeline {
         }
 
         log.info("任务创建Pipeline执行完成, taskId={}", context.getTaskId());
+    }
+
+    private void executeWithRetry(ThTaskCreateHandler handler, ThTaskCreateContext context) {
+        int maxRetry = handler.maxRetry();
+        long delayMs = handler.retryDelayMs();
+        Exception lastException = null;
+
+        for (int attempt = 0; attempt <= maxRetry; attempt++) {
+            try {
+                handler.handle(context);
+                return;
+            } catch (Exception e) {
+                lastException = e;
+                if (attempt < maxRetry) {
+                    long actualDelay = delayMs * (1L << attempt);
+                    log.warn("[{}] 第{}次执行失败, {}ms后重试({}/{}), 错误: {}",
+                            handler.getClass().getSimpleName(), attempt + 1, actualDelay, attempt + 1, maxRetry, e.getMessage());
+                    try {
+                        Thread.sleep(actualDelay);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException("重试被中断", ie);
+                    }
+                }
+            }
+        }
+
+        throw new RuntimeException("Handler执行失败，已重试" + maxRetry + "次", lastException);
     }
 }

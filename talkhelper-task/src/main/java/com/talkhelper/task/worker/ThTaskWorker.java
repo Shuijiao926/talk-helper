@@ -1,162 +1,239 @@
 package com.talkhelper.task.worker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.talkhelper.common.constant.ThLogConstants;
+import com.talkhelper.task.mq.ThMessage;
+import com.talkhelper.task.mq.ThMessageQueue;
 import com.talkhelper.task.mq.ThMessageQueueFactory;
+import com.talkhelper.task.mq.ThRedisMessageQueue;
 import com.talkhelper.task.service.ThAsyncTaskService;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
 import com.talkhelper.textpreprocess.service.ThTextPreprocessService;
-import lombok.RequiredArgsConstructor;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 任务Worker - 消费消息队列中的任务
- * 支持多种MQ实现：Redis、RabbitMQ、Kafka等
+ * 
+ * 架构设计：专用消费线程 + CPU线程池任务分发 + ACK确认
+ * - 2个专用消费线程负责从Redis Stream XREADGROUP取任务（I/O密集）
+ * - 取到任务后提交到CPU线程池执行实际处理（CPU密集）
+ * - XREADGROUP使用30秒超时，无任务时线程阻塞在Redis端，零CPU开销
+ * - 任务处理完成后通过XACK确认，防止消息丢失
+ * - Redis不可用时5秒间隔健康检查，自动恢复消费
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ThTaskWorker implements CommandLineRunner {
 
     private final ThAsyncTaskService taskService;
     private final ThTextPreprocessService preprocessService;
     private final ObjectMapper objectMapper;
-    private final ThMessageQueueFactory mqFactory; // 消息队列工厂
-    private final ExecutorService cpuIntensiveExecutor; // CPU密集型线程池
+    private final ThMessageQueueFactory mqFactory;
+    private final ExecutorService cpuIntensiveExecutor;
+    private final RedisConnectionFactory redisConnectionFactory;
+
+    private static final int CONSUMER_THREAD_COUNT = 2;
+    private static final long READ_TIMEOUT_SECONDS = 30;
+    private static final long RECOVERY_CHECK_INTERVAL_MS = 5000;
+
+    private final AtomicBoolean running = new AtomicBoolean(true);
+    private volatile Thread[] consumerThreads;
+
+    public ThTaskWorker(
+            ThAsyncTaskService taskService,
+            ThTextPreprocessService preprocessService,
+            ObjectMapper objectMapper,
+            ThMessageQueueFactory mqFactory,
+            @Qualifier("cpuIntensiveExecutor") ExecutorService cpuIntensiveExecutor,
+            RedisConnectionFactory redisConnectionFactory) {
+        this.taskService = taskService;
+        this.preprocessService = preprocessService;
+        this.objectMapper = objectMapper;
+        this.mqFactory = mqFactory;
+        this.cpuIntensiveExecutor = cpuIntensiveExecutor;
+        this.redisConnectionFactory = redisConnectionFactory;
+    }
 
     @Override
     public void run(String... args) {
         log.info("========== 任务Worker启动 ==========");
-        
-        // 使用CPU密集型线程池处理任务
-        int workerCount = Runtime.getRuntime().availableProcessors();
-        for (int i = 0; i < workerCount; i++) {
-            cpuIntensiveExecutor.submit(this::consumeTasks);
+
+        consumerThreads = new Thread[CONSUMER_THREAD_COUNT];
+        for (int i = 0; i < CONSUMER_THREAD_COUNT; i++) {
+            consumerThreads[i] = new Thread(this::consumeTasks, "Redis-Consumer-" + (i + 1));
+            consumerThreads[i].setDaemon(true);
+            consumerThreads[i].start();
         }
-        
-        log.info("已提交 {} 个Worker任务到CPU线程池", workerCount);
+
+        log.info("已启动 {} 个专用消费线程，XREADGROUP超时: {}s", CONSUMER_THREAD_COUNT, READ_TIMEOUT_SECONDS);
     }
 
-    /**
-     * 消费任务
-     */
-    private void consumeTasks() {
-        log.info("Worker [{}] 开始消费任务", Thread.currentThread().getName());
-        
-        int consecutiveFailures = 0; // 连续失败次数
-        final int MAX_CONSECUTIVE_FAILURES = 10; // 最大连续失败次数
-        final long BACKOFF_BASE_MS = 1000; // 退避基数（1秒）
-        
-        while (!Thread.currentThread().isInterrupted()) {
-            try {
-                // 检查MQ是否可用
-                if (!mqFactory.getActiveMQ().isAvailable()) {
-                    log.warn("消息队列不可用，Worker进入等待状态");
-                    consecutiveFailures++;
-                    
-                    // 指数退避：1s, 2s, 4s, 8s... 最多30s
-                    long backoffTime = Math.min(
-                        BACKOFF_BASE_MS * (1L << Math.min(consecutiveFailures, 5)),
-                        30000
-                    );
-                    Thread.sleep(backoffTime);
-                    continue;
-                }
-                
-                // MQ可用，重置失败计数
-                consecutiveFailures = 0;
-                
-                // 从队列中获取任务
-                String taskId = taskService.pollTask();
-                
-                if (taskId == null) {
-                    // 队列为空，短暂休眠
-                    Thread.sleep(100);
-                    continue;
-                }
+    @PreDestroy
+    public void shutdown() {
+        log.info("========== 任务Worker开始优雅停机 ==========");
+        running.set(false);
 
-                log.info("Worker [{}] 开始处理任务: {}", Thread.currentThread().getName(), taskId);
-                processTask(taskId);
-                
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                log.warn("Worker被中断");
-                break;
-            } catch (Exception e) {
-                log.error(ThLogConstants.BUSINESS_EXCEPTION, e);
-                
-                // 发生异常，增加失败计数
-                consecutiveFailures++;
-                if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-                    log.error("连续{}次失败，Worker停止", consecutiveFailures);
-                    break;
+        if (consumerThreads != null) {
+            for (Thread t : consumerThreads) {
+                if (t != null) {
+                    t.interrupt();
                 }
             }
         }
-        
-        log.info("Worker [{}] 已停止", Thread.currentThread().getName());
+
+        log.info("任务Worker已停止");
+    }
+
+    private void consumeTasks() {
+        String threadName = Thread.currentThread().getName();
+        log.info("消费线程 [{}] 启动", threadName);
+
+        while (running.get() && !Thread.currentThread().isInterrupted()) {
+            try {
+                ThMessageQueue mq = mqFactory.getActiveMQ();
+
+                if (!mq.isAvailable()) {
+                    waitForRecovery(threadName);
+                    continue;
+                }
+
+                ThMessage message = mq.receiveTask(READ_TIMEOUT_SECONDS);
+
+                if (message == null) {
+                    continue;
+                }
+
+                log.info("消费线程 [{}] 收到任务: {}, deliveryId={}, 提交到CPU线程池处理",
+                        threadName, message.getTaskId(), message.getDeliveryId());
+                cpuIntensiveExecutor.submit(() -> processTask(message));
+
+            } catch (Exception e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                    log.info("消费线程 [{}] 被中断，退出", threadName);
+                    break;
+                }
+                log.error("消费线程 [{}] 异常", threadName, e);
+                sleepSafely(1000);
+            }
+        }
+
+        log.info("消费线程 [{}] 已停止", threadName);
+    }
+
+    private void waitForRecovery(String threadName) {
+        ThMessageQueue mq = mqFactory.getActiveMQ();
+        int checkCount = 0;
+
+        while (running.get() && !mq.isAvailable()) {
+            checkCount++;
+            if (checkCount % 12 == 1) {
+                log.warn("消费线程 [{}] 等待Redis恢复... (已等待约 {}s)",
+                        threadName, checkCount * RECOVERY_CHECK_INTERVAL_MS / 1000);
+            }
+
+            sleepSafely(RECOVERY_CHECK_INTERVAL_MS);
+
+            if (mq instanceof ThRedisMessageQueue redisMQ) {
+                try {
+                    if (pingCheck()) {
+                        redisMQ.markAvailable();
+                        log.info("消费线程 [{}] 检测到Redis已恢复", threadName);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
+
+    private boolean pingCheck() {
+        try {
+            redisConnectionFactory.getConnection().ping();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private void sleepSafely(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
-     * 处理单个任务
+     * 处理单个任务 - 在CPU线程池中执行
+     * 处理完成后通过ACK确认消息，确保至少一次消费语义
      */
-    private void processTask(String taskId) {
+    private void processTask(ThMessage message) {
+        String taskId = message.getTaskId();
+        String deliveryId = message.getDeliveryId();
+        String threadName = Thread.currentThread().getName();
+
         try {
-            // 1. 更新状态为处理中
+            log.info("处理线程 [{}] 开始处理任务: {}, deliveryId={}", threadName, taskId, deliveryId);
+
             taskService.startTask(taskId);
 
-            // 2. 获取任务信息
             var task = taskService.getTask(taskId);
             if (task == null) {
                 taskService.failTask(taskId, "任务不存在");
+                mqFactory.getActiveMQ().ackTask(deliveryId);
                 return;
             }
 
-            // 3. 检查是否已取消
             if ("cancelled".equals(task.getStatus())) {
                 log.info("任务已取消，跳过执行: {}", taskId);
+                mqFactory.getActiveMQ().ackTask(deliveryId);
                 return;
             }
 
-            // 4. 解析请求数据
+            String requestData = taskService.getRequestData(taskId);
+            if (requestData == null) {
+                taskService.failTask(taskId, "请求数据不存在");
+                mqFactory.getActiveMQ().ackTask(deliveryId);
+                return;
+            }
+
             ThFileUploadRequest request = objectMapper.readValue(
-                    task.getRequestData(), 
+                    requestData,
                     ThFileUploadRequest.class
             );
 
-            // 5. 更新进度：开始解析
             taskService.updateProgress(taskId, 10, "正在解析文档");
 
-            // 6. 执行文本预处理（同步）
             var result = preprocessService.uploadAndProcessWithConfig(request);
 
-            // 7. 更新进度：完成
             taskService.updateProgress(taskId, 90, "正在生成结果");
 
-            // 8. 更新输出文件信息到数据库
             if (result.getOutputFileUrl() != null) {
                 task.setOutputFileName(result.getOutputFileName());
                 task.setOutputFileUrl(result.getOutputFileUrl());
-                // 计算文件大小(AI结果的字节数)
                 if (result.getAiResult() != null) {
                     task.setOutputFileSize((long) result.getAiResult().getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
                 }
                 log.info("任务输出文件信息: name={}, url={}", result.getOutputFileName(), result.getOutputFileUrl());
             }
 
-            // 9. 完成任务
             String resultJson = objectMapper.writeValueAsString(result);
             taskService.completeTask(taskId, resultJson);
 
-            log.info("任务处理完成: {}", taskId);
+            mqFactory.getActiveMQ().ackTask(deliveryId);
+            log.info("任务处理完成并已ACK: taskId={}, deliveryId={}", taskId, deliveryId);
 
         } catch (Exception e) {
-            log.error("任务处理失败: {}", taskId, e);
+            log.error("任务处理失败: taskId={}, deliveryId={}", taskId, deliveryId, e);
             taskService.failTask(taskId, e.getMessage());
+            mqFactory.getActiveMQ().ackTask(deliveryId);
         }
     }
 }

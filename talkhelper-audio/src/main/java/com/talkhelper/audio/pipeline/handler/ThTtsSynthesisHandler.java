@@ -31,6 +31,16 @@ public class ThTtsSynthesisHandler implements ThAudioProcessHandler {
     }
 
     @Override
+    public int maxRetry() {
+        return 3;
+    }
+
+    @Override
+    public long retryDelayMs() {
+        return 3000;
+    }
+
+    @Override
     public void handle(ThAudioProcessContext context) throws Exception {
         log.info("[{}] 开始TTS语音合成", getName());
         

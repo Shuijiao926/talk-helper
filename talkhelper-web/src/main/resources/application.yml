@@ -14,7 +14,7 @@ spring:
   # Spring AI Alibaba DashScope配置
   ai:
     dashscope:
-      api-key: sk-5355539b05fc43c598e03cf05fc47117
+      api-key: ${DASHSCOPE_API_KEY:sk-placeholder}
       chat:
         options:
           model: qwen3-max
@@ -51,11 +51,36 @@ management:
     tags:
       application: ${spring.application.name}
 
+# DashScope OpenAI兼容接口Base URL
+dashscope:
+  base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+
+# Forest 声明式HTTP客户端配置
+forest:
+  backend: okhttp3
+  connect-timeout: 10000
+  read-timeout: 300000
+  max-retry-count: 1
+  log-enabled: true
+  log-request: true
+  log-response-status: true
+  log-response-content: false
+
+# RocketMQ配置
+rocketmq:
+  name-server: ${ROCKETMQ_NAMESRV:127.0.0.1:9876}
+  producer:
+    group: talkhelper-producer-group
+    send-message-timeout: 3000
+    retry-times-when-send-failed: 2
+  # 本地开发时禁用RocketMQ自动配置，避免启动失败
+  enabled: ${ROCKETMQ_ENABLED:false}
+
 # 业务配置
 talkhelper:
   # 消息队列配置
   mq:
-    type: redis  # 可选: redis, rabbitmq, kafka, rocketmq
+    type: ${MQ_TYPE:redis}  # 可选: redis, rabbitmq, rocketmq
   # LLM配置
   llm:
     provider: dashscope  # 可选: dashscope, openai, claude
@@ -65,9 +90,9 @@ talkhelper:
     active-type: minio  # 可选: minio, local, s3
     # MinIO专用配置
     minio:
-      endpoint: http://127.0.0.1:9000
-      access-key: minioadmin
-      secret-key: minioadmin
+      endpoint: ${MINIO_ENDPOINT:http://127.0.0.1:9000}
+      access-key: ${MINIO_ACCESS_KEY:minioadmin}
+      secret-key: ${MINIO_SECRET_KEY:minioadmin}
       bucket-name: talkhelper
 
 # 日志配置

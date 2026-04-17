@@ -2,7 +2,7 @@ package com.talkhelper.task.mq;
 
 /**
  * 消息队列接口（策略模式）
- * 支持多种MQ实现：Redis、RabbitMQ、Kafka、RocketMQ等
+ * 支持多种MQ实现：Redis Streams、RabbitMQ、Kafka、RocketMQ等
  */
 public interface ThMessageQueue {
 
@@ -27,9 +27,18 @@ public interface ThMessageQueue {
      * 从队列中消费任务（阻塞式）
      *
      * @param timeoutSeconds 超时时间（秒）
-     * @return 任务ID，如果超时无任务则返回null
+     * @return 消息包装对象，包含任务ID和消息投递ID（用于ACK），超时无任务返回null
      */
-    String receiveTask(long timeoutSeconds);
+    ThMessage receiveTask(long timeoutSeconds);
+
+    /**
+     * 确认任务处理完成
+     * 用于支持至少一次消费语义，防止消息丢失
+     *
+     * @param deliveryId 消息投递ID（Stream Entry ID 或等效标识）
+     */
+    default void ackTask(String deliveryId) {
+    }
 
     /**
      * 关闭MQ连接

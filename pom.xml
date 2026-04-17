@@ -42,6 +42,8 @@
         <minio.version>8.5.7</minio.version>
         <lombok.version>1.18.30</lombok.version>
         <hutool.version>5.8.25</hutool.version>
+        <forest.version>1.8.0</forest.version>
+        <rocketmq-spring.version>2.3.1</rocketmq-spring.version>
     </properties>
 
     <dependencyManagement>
@@ -103,6 +105,20 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-core</artifactId>
                 <version>${hutool.version}</version>
+            </dependency>
+
+            <!-- Forest 声明式HTTP客户端 -->
+            <dependency>
+                <groupId>com.dtflys.forest</groupId>
+                <artifactId>forest-spring-boot3-starter</artifactId>
+                <version>${forest.version}</version>
+            </dependency>
+
+            <!-- RocketMQ Spring Boot Starter -->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq-spring.version}</version>
             </dependency>
 
             <!-- Source: https://mvnrepository.com/artifact/com.alibaba.cloud.ai/spring-ai-alibaba-core -->

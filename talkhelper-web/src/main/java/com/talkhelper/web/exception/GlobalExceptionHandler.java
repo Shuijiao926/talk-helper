@@ -1,6 +1,7 @@
 package com.talkhelper.web.exception;
 
 import com.talkhelper.common.exception.ThBusinessException;
+import com.talkhelper.common.result.ThErrorCode;
 import com.talkhelper.common.result.ThResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,26 +15,16 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.stream.Collectors;
 
-/**
- * 全局异常处理器
- * 统一处理Controller层抛出的异常，提高代码内聚性
- */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    /**
-     * 处理业务异常
-     */
     @ExceptionHandler(ThBusinessException.class)
     public ThResult<?> handleBusinessException(ThBusinessException e) {
-        log.warn("业务异常: {}", e.getMessage());
-        return ThResult.error(e.getMessage());
+        log.warn("业务异常: code={}, message={}", e.getErrorCode().getCode(), e.getMessage());
+        return ThResult.error(e.getErrorCode(), e.getMessage());
     }
 
-    /**
-     * 处理参数校验异常（@Valid）
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ThResult<?> handleValidationException(MethodArgumentNotValidException e) {
@@ -41,12 +32,9 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
         log.warn("参数校验失败: {}", errorMessage);
-        return ThResult.error("参数校验失败: " + errorMessage);
+        return ThResult.error(ThErrorCode.BAD_REQUEST, errorMessage);
     }
 
-    /**
-     * 处理绑定异常
-     */
     @ExceptionHandler(BindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ThResult<?> handleBindException(BindException e) {
@@ -54,36 +42,27 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
         log.warn("参数绑定失败: {}", errorMessage);
-        return ThResult.error("参数绑定失败: " + errorMessage);
+        return ThResult.error(ThErrorCode.BAD_REQUEST, errorMessage);
     }
 
-    /**
-     * 处理文件上传大小超限异常
-     */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ThResult<?> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
         log.warn("文件大小超出限制");
-        return ThResult.error("文件大小超出限制，请上传较小的文件");
+        return ThResult.error(ThErrorCode.TASK_FILE_TOO_LARGE);
     }
 
-    /**
-     * 处理非法参数异常
-     */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ThResult<?> handleIllegalArgumentException(IllegalArgumentException e) {
         log.warn("非法参数: {}", e.getMessage());
-        return ThResult.error("参数错误: " + e.getMessage());
+        return ThResult.error(ThErrorCode.BAD_REQUEST, e.getMessage());
     }
 
-    /**
-     * 处理其他所有未捕获的异常
-     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ThResult<?> handleException(Exception e) {
         log.error("系统异常", e);
-        return ThResult.error("系统内部错误，请联系管理员");
+        return ThResult.error(ThErrorCode.INTERNAL_ERROR);
     }
 }

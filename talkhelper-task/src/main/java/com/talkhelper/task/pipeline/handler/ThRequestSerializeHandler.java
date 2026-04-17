@@ -2,7 +2,7 @@ package com.talkhelper.task.pipeline.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.talkhelper.common.constant.ThConstants;
+import com.talkhelper.common.storage.ThObjectStorageFactory;
 import com.talkhelper.task.pipeline.ThTaskCreateContext;
 import com.talkhelper.task.pipeline.ThTaskCreateHandler;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
@@ -12,39 +12,41 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * 请求数据序列化Handler
- * 将ThFileUploadRequest序列化为JSON,并清除file字段
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class ThRequestSerializeHandler implements ThTaskCreateHandler {
 
     private final ObjectMapper objectMapper;
+    private final ThObjectStorageFactory storageFactory;
 
     @Override
     public void handle(ThTaskCreateContext context) {
-        // 从上下文中获取已提取的文件信息
         String fileName = context.getInputFileName();
         Long fileSize = context.getInputFileSize();
 
-        // 构建请求对象并序列化
         try {
             MultipartFile file = context.getFile();
-            
+
             ThFileUploadRequest request = ThFileUploadRequest.builder()
                     .file(file)
                     .build();
 
-            // 清除file字段（避免序列化问题）
             request.setFile(null);
 
-            // 序列化请求数据
             String requestData = objectMapper.writeValueAsString(request);
             context.setRequestData(requestData);
 
-            log.debug("请求数据序列化完成: fileName={}, size={}", fileName, fileSize);
+            String objectKey = "task-data/" + context.getTaskId() + "/request.json";
+            String url = storageFactory.getActiveStorage().uploadBytes(
+                    requestData.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                    "talkhelper",
+                    objectKey,
+                    "application/json"
+            );
+            context.setRequestDataUrl(url);
+
+            log.debug("请求数据序列化并上传完成: fileName={}, url={}", fileName, url);
 
         } catch (JsonProcessingException e) {
             log.error("请求数据序列化失败", e);
@@ -55,6 +57,6 @@ public class ThRequestSerializeHandler implements ThTaskCreateHandler {
 
     @Override
     public int getOrder() {
-        return 1;
+        return 5;
     }
 }

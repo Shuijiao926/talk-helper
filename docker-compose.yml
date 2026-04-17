@@ -107,6 +107,56 @@ services:
       - talkhelper-network
     restart: unless-stopped
 
+  # RocketMQ NameServer
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.3.1
+    container_name: talkhelper-rocketmq-namesrv
+    ports:
+      - "9876:9876"
+    environment:
+      JAVA_OPT: "-server -Xms256m -Xmx256m"
+    command: sh mqnamesrv
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 9876 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RocketMQ Broker
+  rocketmq-broker:
+    image: apache/rocketmq:5.3.1
+    container_name: talkhelper-rocketmq-broker
+    ports:
+      - "10911:10911"
+      - "10909:10909"
+    environment:
+      JAVA_OPT_EXT: "-server -Xms512m -Xmx512m"
+      NAMESRV_ADDR: rocketmq-namesrv:9876
+    command: sh mqbroker -c /home/rocketmq/rocketmq-5.3.1/conf/broker.conf
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    depends_on:
+      rocketmq-namesrv:
+        condition: service_healthy
+
+  # RocketMQ Dashboard
+  rocketmq-dashboard:
+    image: apacherocketmq/rocketmq-dashboard:latest
+    container_name: talkhelper-rocketmq-dashboard
+    ports:
+      - "8180:8080"
+    environment:
+      JAVA_OPTS: "-Drocketmq.namesrv.addr=rocketmq-namesrv:9876"
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    depends_on:
+      - rocketmq-namesrv
+
   # Grafana - 监控可视化
   grafana:
     image: grafana/grafana:latest

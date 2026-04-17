@@ -7,10 +7,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 文本处理管道执行器
- * 负责按顺序执行所有注册的处理器
- */
 @Slf4j
 @Component
 public class ThTextProcessPipeline {
@@ -22,20 +18,13 @@ public class ThTextProcessPipeline {
         log.info("文本处理管道初始化完成, 注册处理器数量: {}", handlers.size());
     }
 
-    /**
-     * 执行管道处理
-     *
-     * @param context 处理上下文
-     * @return 处理后的上下文
-     */
     public ThTextProcessContext execute(ThTextProcessContext context) {
         log.info(ThLogConstants.LOG_SEPARATOR_START, "文本处理管道");
-        
+
         long startTime = System.currentTimeMillis();
-        
+
         try {
             for (ThTextProcessHandler handler : handlers) {
-                // 检查是否应该执行此处理器
                 if (!handler.shouldHandle(context)) {
                     log.debug(ThLogConstants.HANDLER_SKIP, handler.getName());
                     continue;
@@ -45,13 +34,12 @@ public class ThTextProcessPipeline {
                 long handlerStartTime = System.currentTimeMillis();
 
                 try {
-                    // 执行处理器
-                    handler.handle(context);
-                    
+                    executeWithRetry(handler, context);
+
                     long handlerEndTime = System.currentTimeMillis();
-                    log.info(ThLogConstants.HANDLER_SUCCESS, 
+                    log.info(ThLogConstants.HANDLER_SUCCESS,
                             handler.getName(), handlerEndTime - handlerStartTime);
-                    
+
                 } catch (Exception e) {
                     log.error(ThLogConstants.HANDLER_ERROR, handler.getName(), e);
                     throw new RuntimeException(
@@ -61,9 +49,9 @@ public class ThTextProcessPipeline {
 
             long endTime = System.currentTimeMillis();
             log.info(ThLogConstants.LOG_SEPARATOR_END, "文本处理管道", endTime - startTime);
-            
+
             return context;
-            
+
         } catch (Exception e) {
             long endTime = System.currentTimeMillis();
             log.error(ThLogConstants.LOG_SEPARATOR_ERROR, "文本处理管道", endTime - startTime, e);
@@ -71,9 +59,29 @@ public class ThTextProcessPipeline {
         }
     }
 
-    /**
-     * 获取所有已注册的处理器
-     */
+    private void executeWithRetry(ThTextProcessHandler handler, ThTextProcessContext context) throws Exception {
+        int maxRetry = handler.maxRetry();
+        long delayMs = handler.retryDelayMs();
+        Exception lastException = null;
+
+        for (int attempt = 0; attempt <= maxRetry; attempt++) {
+            try {
+                handler.handle(context);
+                return;
+            } catch (Exception e) {
+                lastException = e;
+                if (attempt < maxRetry) {
+                    long actualDelay = delayMs * (1L << attempt);
+                    log.warn("[{}] 第{}次执行失败, {}ms后重试({}/{}), 错误: {}",
+                            handler.getName(), attempt + 1, actualDelay, attempt + 1, maxRetry, e.getMessage());
+                    Thread.sleep(actualDelay);
+                }
+            }
+        }
+
+        throw lastException;
+    }
+
     public List<ThTextProcessHandler> getHandlers() {
         return new ArrayList<>(handlers);
     }

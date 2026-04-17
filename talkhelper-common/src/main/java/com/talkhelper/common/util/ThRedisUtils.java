@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -198,8 +199,8 @@ public class ThRedisUtils {
      * @return 删除的数量
      */
     public Long deleteByPattern(String pattern) {
-        Set<String> keys = redisTemplate.keys(pattern);
-        if (keys == null || keys.isEmpty()) {
+        Set<String> keys = scanKeys(pattern);
+        if (keys.isEmpty()) {
             return 0L;
         }
         return redisTemplate.delete(keys);
@@ -219,7 +220,15 @@ public class ThRedisUtils {
      * 获取匹配的键集合
      */
     public Set<String> keys(String pattern) {
-        return redisTemplate.keys(pattern);
+        return scanKeys(pattern);
+    }
+
+    private Set<String> scanKeys(String pattern) {
+        Set<String> keys = new HashSet<>();
+        try (var cursor = redisTemplate.scan(org.springframework.data.redis.core.ScanOptions.scanOptions().match(pattern).count(500).build())) {
+            cursor.forEachRemaining(key -> keys.add((String) key));
+        }
+        return keys;
     }
 
     // ==================== 原子操作 ====================

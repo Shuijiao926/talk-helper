@@ -30,22 +30,23 @@ public class ThRabbitMQMessageQueue implements ThMessageQueue {
 
     @Override
     public boolean isAvailable() {
-        // TODO: 实现RabbitMQ健康检查
         return false;
     }
 
     @Override
     public void sendTask(String taskId) {
-        // rabbitTemplate.convertAndSend(QUEUE_NAME, taskId);
         log.debug("任务已发送到RabbitMQ: {}", taskId);
         throw new UnsupportedOperationException("RabbitMQ实现待完成");
     }
 
     @Override
-    public String receiveTask(long timeoutSeconds) {
-        // Object taskId = rabbitTemplate.receiveAndConvert(QUEUE_NAME, timeoutSeconds * 1000);
-        // return taskId != null ? taskId.toString() : null;
+    public ThMessage receiveTask(long timeoutSeconds) {
         log.debug("从RabbitMQ接收任务");
+        throw new UnsupportedOperationException("RabbitMQ实现待完成");
+    }
+
+    @Override
+    public void ackTask(String deliveryId) {
         throw new UnsupportedOperationException("RabbitMQ实现待完成");
     }
 

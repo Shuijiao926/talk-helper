@@ -2,9 +2,6 @@ package com.talkhelper.common.result;
 
 import lombok.Data;
 
-/**
- * 统一返回结果类
- */
 @Data
 public class ThResult<T> {
 
@@ -14,15 +11,33 @@ public class ThResult<T> {
 
     public static <T> ThResult<T> success(T data) {
         ThResult<T> result = new ThResult<>();
-        result.setCode(200);
-        result.setMessage("success");
+        result.setCode(ThErrorCode.SUCCESS.getCode());
+        result.setMessage(ThErrorCode.SUCCESS.getMessage());
         result.setData(data);
+        return result;
+    }
+
+    public static <T> ThResult<T> success() {
+        return success(null);
+    }
+
+    public static <T> ThResult<T> error(ThErrorCode errorCode) {
+        ThResult<T> result = new ThResult<>();
+        result.setCode(errorCode.getCode());
+        result.setMessage(errorCode.getMessage());
+        return result;
+    }
+
+    public static <T> ThResult<T> error(ThErrorCode errorCode, String message) {
+        ThResult<T> result = new ThResult<>();
+        result.setCode(errorCode.getCode());
+        result.setMessage(message);
         return result;
     }
 
     public static <T> ThResult<T> error(String message) {
         ThResult<T> result = new ThResult<>();
-        result.setCode(500);
+        result.setCode(ThErrorCode.INTERNAL_ERROR.getCode());
         result.setMessage(message);
         return result;
     }

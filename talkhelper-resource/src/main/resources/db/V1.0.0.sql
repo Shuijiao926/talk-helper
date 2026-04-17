@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS `th_task` (
     `status` VARCHAR(16) NOT NULL DEFAULT 'pending' COMMENT '任务状态',
     `progress` INT DEFAULT 0 COMMENT '进度百分比',
     `current_stage` VARCHAR(255) DEFAULT NULL COMMENT '当前阶段描述',
-    `request_data` TEXT COMMENT '请求参数JSON',
-    `result_data` LONGTEXT COMMENT '结果数据JSON',
+    `request_data_url` VARCHAR(512) DEFAULT NULL COMMENT '请求参数JSON的对象存储URL',
+    `result_data_url` VARCHAR(512) DEFAULT NULL COMMENT '结果数据JSON的对象存储URL',
     `error_message` TEXT COMMENT '错误信息',
     
     -- 输入文件信息
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `th_podcast_script` (
     `podcast_id` VARCHAR(64) NOT NULL COMMENT '关联播客ID',
     `version` INT NOT NULL DEFAULT 1 COMMENT '脚本版本号',
     `is_current` TINYINT NOT NULL DEFAULT 1 COMMENT '是否当前版本:0-否,1-是',
-    `content` LONGTEXT NOT NULL COMMENT '脚本内容(JSON格式,包含角色、台词、情绪、停顿、BGM标注)',
+    `content_url` VARCHAR(512) NOT NULL COMMENT '脚本内容JSON的对象存储URL',
     `content_plain` TEXT COMMENT '脚本纯文本(用于预览)',
     `generate_source` VARCHAR(32) NOT NULL COMMENT '生成来源:AI-自动生成,USER-用户编辑',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

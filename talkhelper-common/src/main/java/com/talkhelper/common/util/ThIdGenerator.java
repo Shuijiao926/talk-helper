@@ -130,6 +130,8 @@ public class ThIdGenerator {
      */
     private static String toBase62(long number, int length) {
         StringBuilder sb = new StringBuilder(length);
+        // 确保number为正数,避免负数取模得到负数索引
+        number = Math.abs(number);
         for (int i = 0; i < length; i++) {
             sb.append(BASE62_CHARS[(int) (number % 62)]);
             number /= 62;

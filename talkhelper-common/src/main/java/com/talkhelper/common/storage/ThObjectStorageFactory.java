@@ -1,5 +1,6 @@
 package com.talkhelper.common.storage;
 
+import com.talkhelper.common.config.ThStorageConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -8,28 +9,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 对象存储工厂
- * 根据配置动态选择存储策略
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class ThObjectStorageFactory {
 
     private final List<ThObjectStorageStrategy> strategies;
+    private final ThStorageConfig storageConfig;
     private final Map<String, ThObjectStorageStrategy> strategyMap = new ConcurrentHashMap<>();
 
-    /**
-     * 获取激活的存储策略
-     */
     public ThObjectStorageStrategy getActiveStorage() {
-        // TODO: 从配置中读取激活的存储类型,默认使用MinIO
-        String activeType = "minio";
-        
+        String activeType = storageConfig.getActiveType();
+
         ThObjectStorageStrategy strategy = strategyMap.get(activeType);
         if (strategy == null) {
-            // 初始化策略映射
             for (ThObjectStorageStrategy s : strategies) {
                 strategyMap.put(s.getType(), s);
             }
@@ -48,9 +41,6 @@ public class ThObjectStorageFactory {
         return strategy;
     }
 
-    /**
-     * 查找第一个可用的存储策略
-     */
     private ThObjectStorageStrategy findAvailableStrategy() {
         for (ThObjectStorageStrategy strategy : strategies) {
             if (strategy.isAvailable()) {

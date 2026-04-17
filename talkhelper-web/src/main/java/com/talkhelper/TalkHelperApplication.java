@@ -6,13 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-/**
- * TalkHelper 主启动类
- * AI驱动的播客生成平台
- */
 @EnableAsync
 @EnableScheduling
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+        org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class
+})
 public class TalkHelperApplication {
 
     public static void main(String[] args) {

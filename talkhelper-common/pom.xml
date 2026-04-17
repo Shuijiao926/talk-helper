@@ -61,6 +61,12 @@
             <optional>true</optional>
         </dependency>
         
+        <!-- Forest 声明式HTTP客户端 -->
+        <dependency>
+            <groupId>com.dtflys.forest</groupId>
+            <artifactId>forest-spring-boot3-starter</artifactId>
+        </dependency>
+        
         <!-- MinIO 对象存储 -->
         <dependency>
             <groupId>io.minio</groupId>

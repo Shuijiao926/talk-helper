@@ -69,4 +69,14 @@ public class ThMinioUploadHandler implements ThTaskCreateHandler {
     public int getOrder() {
         return 2;
     }
+
+    @Override
+    public int maxRetry() {
+        return 2;
+    }
+
+    @Override
+    public long retryDelayMs() {
+        return 2000;
+    }
 }
