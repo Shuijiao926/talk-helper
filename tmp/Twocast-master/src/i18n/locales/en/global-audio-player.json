@@ -1,0 +1,9 @@
+{
+    "playing": "Playing",
+    "volume": "Volume",
+    "playback_rate": "Playback Rate",
+    "playback_rate_tooltip": "Playback Rate",
+    "playback_rate_tooltip_mobile": "Playback Rate",
+    "collapse_player": "Collapse Player",
+    "close_player": "Close Player"
+}

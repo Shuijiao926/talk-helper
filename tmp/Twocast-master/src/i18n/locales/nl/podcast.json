@@ -1,0 +1,36 @@
+{
+  "outline": "Overzicht",
+  "keyPoints": "Belangrijke Punten",
+  "scripts": "Scripts",
+  "click_play_button_to_start_listening": "Klik op de afspeelknop om te beginnen met luisteren",
+  "role_host": "Gastheer",
+  "role_guest": "Gast",
+  "playing": "Afspelen",
+  "paused": "Pauze",
+  "tabs": {
+    "topic": "Onderwerp",
+    "link": "Link",
+    "upload_file": "Bestand Uploaden",
+    "long_text": "Lange Tekst",
+    "front_page": "Voorpagina"
+  },
+  "placeholder": {
+    "topic": "Voer het onderwerp in dat je interessant vindt",
+    "link": "Plak hier je link (bijv. https://example.com)",
+    "upload_file": "Upload een bestand",
+    "long_text": "Plak hier je lange tekst",
+    "upload_file_tips": "Ondersteunt PDF, DOC, TXT bestanden tot 10MB",
+    "front_page": "Plak je voorpagina hier (bijv. https://news.ycombinator.com/front)"
+  },
+  "platform": "Platform",
+  "voice_1": "Stem 1",
+  "voice_2": "Stem 2",
+  "output_language": "Doeltaal",
+  "create_button": "Podcast Maken",
+  "create_button_loading": "Podcast Aanmaken...",
+  "create_button_success": "Podcast Aangemaakt",
+  "create_button_error": "Aanmaken van Podcast Mislukt",
+  "more_voices_about": "Meer stemmen over {{platform}}",
+  "auto": "Auto",
+  "depends_on_source_language": "Hangt af van de brontaal"
+}

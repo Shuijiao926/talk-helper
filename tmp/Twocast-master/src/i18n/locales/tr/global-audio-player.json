@@ -1,0 +1,9 @@
+{
+  "playing": "Oynatma",
+  "volume": "Ses Seviyesi",
+  "playback_rate": "Oynatma Hızı",
+  "playback_rate_tooltip": "Oynatma Hızı",
+  "playback_rate_tooltip_mobile": "Oynatma Hızı",
+  "collapse_player": "Oynatıcıyı Küçült",
+  "close_player": "Oynatıcıyı Kapat"
+}

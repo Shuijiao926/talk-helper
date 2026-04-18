@@ -1,0 +1,20 @@
+{
+  "title": "Precios",
+  "description": "Elija un plan para comprar créditos, Desate su creatividad con {{name}}",
+  "products": {
+    "features": {
+      "priority_generation_queue": "Cola de generación prioritaria",
+      "no_watermark_on_video": "Sin marca de agua en el video",
+      "valid_for": "Válido por {{expiresIn}} {{period}}"
+    }
+  },
+  "period": {
+    "day": "día",
+    "week": "semana",
+    "month": "mes",
+    "year": "año"
+  },
+  "buy": "Comprar",
+  "credit": "crédito",
+  "up_to_images": "Hasta {{cnt}} audios"
+}

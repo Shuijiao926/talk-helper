@@ -1,0 +1,36 @@
+{
+    "outline": "Outline",
+    "keyPoints": "Key Points",
+    "scripts": "Scripts",
+    "click_play_button_to_start_listening": "Click the play button to start listening",
+    "role_host": "Host",
+    "role_guest": "Guest",
+    "playing": "Playing",
+    "paused": "Paused",
+    "tabs": {
+        "topic": "Topic",
+        "link": "Link",
+        "upload_file": "Upload File",
+        "long_text": "Long Text",
+        "front_page": "Front Page"
+    },
+    "placeholder": {
+        "topic": "Enter the topic you're interested in",
+        "link": "Paste your link here (e.g., https://example.com)",
+        "upload_file": "Upload a file",
+        "long_text": "Paste your long text here",
+        "upload_file_tips": "Supports PDF, DOC, TXT files up to 10MB",
+        "front_page": "Paste your front page here (e.g., https://news.ycombinator.com/front)"
+    },
+    "platform": "Platform",
+    "voice_1": "Voice 1",
+    "voice_2": "Voice 2",
+    "output_language": "Output Language",
+    "create_button": "Create Podcast",
+    "create_button_loading": "Creating Podcast...",
+    "create_button_success": "Podcast Created",
+    "create_button_error": "Failed to Create Podcast",
+    "more_voices_about": "More voices about {{platform}}",
+    "auto": "Auto",
+    "depends_on_source_language": "Depends on the source language"
+}

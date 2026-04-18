@@ -1,0 +1,9 @@
+{
+  "playing": "Reproduciendo",
+  "volume": "Volumen",
+  "playback_rate": "Tasa de Reproducción",
+  "playback_rate_tooltip": "Tasa de Reproducción",
+  "playback_rate_tooltip_mobile": "Tasa de Reproducción",
+  "collapse_player": "Colapsar Reproductor",
+  "close_player": "Cerrar Reproductor"
+}

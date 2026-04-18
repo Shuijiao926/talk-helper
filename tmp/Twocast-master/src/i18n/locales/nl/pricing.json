@@ -1,0 +1,20 @@
+{
+  "title": "Prijsstelling",
+  "description": "Kies een plan om tegoeden te kopen, Ontketen je creativiteit met {{name}}",
+  "products": {
+    "features": {
+      "priority_generation_queue": "Prioriteitsgeneratie wachtrij",
+      "no_watermark_on_video": "Geen watermerk op video",
+      "valid_for": "Geldig voor {{expiresIn}} {{period}}"
+    }
+  },
+  "period": {
+    "day": "dag",
+    "week": "week",
+    "month": "maand",
+    "year": "jaar"
+  },
+  "buy": "Koop",
+  "credit": "tegoed",
+  "up_to_images": "Tot {{cnt}} audio's"
+}

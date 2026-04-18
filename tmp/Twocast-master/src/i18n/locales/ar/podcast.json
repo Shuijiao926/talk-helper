@@ -1,0 +1,36 @@
+{
+  "outline": "إطار العمل",
+  "keyPoints": "نقاط رئيسية",
+  "scripts": "نصوص",
+  "click_play_button_to_start_listening": "اضغط على زر التشغيل لبدء الاستماع",
+  "role_host": "مقدم",
+  "role_guest": "ضيف",
+  "playing": "جاري التشغيل",
+  "paused": "موقوف مؤقت",
+  "tabs": {
+    "topic": "موضوع",
+    "link": "رابط",
+    "upload_file": "رفع ملف",
+    "long_text": "نص طويل",
+    "front_page": "الصفحة الرئيسية"
+  },
+  "placeholder": {
+    "topic": "أدخل الموضوع الذي تهتم به",
+    "link": "الصق رابطك هنا (مثل: https://example.com)",
+    "upload_file": "رفع ملف",
+    "long_text": "الصق نصك الطويل هنا",
+    "upload_file_tips": "يدعم ملفات PDF و DOC و TXT حتى 10 ميغابايت",
+    "front_page": "الصق صفحتك الرئيسية هنا (مثل، https://news.ycombinator.com/front)"
+  },
+  "platform": "منصة",
+  "voice_1": "صوت 1",
+  "voice_2": "صوت 2",
+  "output_language": "لغة الإخراج",
+  "create_button": "إنشاء بودكاست",
+  "create_button_loading": "جارٍ إنشاء البودكاست...",
+  "create_button_success": "تم إنشاء البودكاست",
+  "create_button_error": "فشل في إنشاء البودكاست",
+  "more_voices_about": "مزيد من الأصوات حول {{platform}}",
+  "auto": "أوتو",
+  "depends_on_source_language": "يعتمد على اللغة المصدر"
+}

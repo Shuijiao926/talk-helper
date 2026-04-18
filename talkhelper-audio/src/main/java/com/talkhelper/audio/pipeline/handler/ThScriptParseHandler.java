@@ -1,146 +1,78 @@
 package com.talkhelper.audio.pipeline.handler;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talkhelper.audio.pipeline.ThAudioProcessContext;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
- * 步骤1：脚本结构化解析处理器
- * 解析带标注的播客脚本，提取角色、情绪、停顿、BGM、音效等标签
+ * 步骤1：脚本 JSON 解析处理器
+ * 解析 LLM 生成的 JSON 脚本数组 [{role, text}]
  */
 @Slf4j
 public class ThScriptParseHandler implements ThAudioProcessHandler {
 
-    // 正则表达式模式
-    private static final Pattern ROLE_PATTERN = Pattern.compile("\\[(主持人|嘉宾|旁白)\\]");
-    private static final Pattern EMOTION_PATTERN = Pattern.compile("\\((轻快|严肃|慢速|快速|激动|平静)\\)");
-    private static final Pattern PAUSE_PATTERN = Pattern.compile("\\[停顿([0-9.]+)秒\\]");
-    private static final Pattern BGM_PATTERN = Pattern.compile("\\[背景音乐：([^\\]]+)\\]");
-    private static final Pattern SFX_PATTERN = Pattern.compile("\\[音效：([^\\]]+)\\]");
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override
     public String getName() {
-        return "脚本结构化解析处理器";
+        return "脚本JSON解析处理器";
     }
 
     @Override
     public boolean shouldHandle(ThAudioProcessContext context) {
-        return context.getPodcastScript() != null && context.getSegments() == null;
+        return context.getPodcastScript() != null && context.getScriptItems() == null;
     }
 
     @Override
     public void handle(ThAudioProcessContext context) throws Exception {
-        log.info("[{}] 开始解析播客脚本", getName());
-        
-        String script = context.getPodcastScript();
-        List<ThAudioProcessContext.PodcastSegment> segments = parseScript(script);
-        
-        context.setSegments(segments);
-        
-        log.info("[{}] 脚本解析完成, 共 {} 个段落", getName(), segments.size());
-        
-        // 上报进度
+        log.info("[{}] 开始解析播客脚本JSON", getName());
+
+        String script = context.getPodcastScript().trim();
+
+        // 支持两种格式：
+        // 1. 纯数组: [{"role":"host","text":"..."}]
+        // 2. 包装对象: {"script": [{"role":"host","text":"..."}]}
+        List<Map<String, String>> rawItems;
+        if (script.startsWith("[")) {
+            rawItems = MAPPER.readValue(script, new TypeReference<>() {});
+        } else {
+            Map<String, Object> wrapper = MAPPER.readValue(script, new TypeReference<>() {});
+            Object scriptObj = wrapper.get("script");
+            if (scriptObj == null) {
+                throw new IllegalArgumentException("JSON 对象中未找到 'script' 字段");
+            }
+            rawItems = MAPPER.convertValue(scriptObj, new TypeReference<>() {});
+        }
+
+        if (rawItems == null || rawItems.isEmpty()) {
+            throw new IllegalArgumentException("脚本内容为空");
+        }
+
+        // 转换为 ScriptItem
+        List<ThAudioProcessContext.ScriptItem> scriptItems = IntStream.range(0, rawItems.size())
+                .mapToObj(i -> {
+                    Map<String, String> raw = rawItems.get(i);
+                    return ThAudioProcessContext.ScriptItem.builder()
+                            .index(i)
+                            .role(raw.getOrDefault("role", "host"))
+                            .text(raw.getOrDefault("text", ""))
+                            .build();
+                })
+                .filter(item -> item.getText() != null && !item.getText().isBlank())
+                .toList();
+
+        context.setScriptItems(scriptItems);
+
+        log.info("[{}] 脚本解析完成, 共 {} 个条目", getName(), scriptItems.size());
+
         if (context.getProgressCallback() != null && context.getTaskId() != null) {
-            context.getProgressCallback().updateProgress(context.getTaskId(), 14, "脚本解析完成");
+            context.getProgressCallback().updateProgress(context.getTaskId(), 10, "脚本解析完成");
         }
-    }
-
-    /**
-     * 解析脚本为结构化段落
-     */
-    private List<ThAudioProcessContext.PodcastSegment> parseScript(String script) {
-        List<ThAudioProcessContext.PodcastSegment> segments = new ArrayList<>();
-        
-        // 按行分割
-        String[] lines = script.split("\n");
-        
-        int index = 0;
-        String currentRole = "主持人"; // 默认角色
-        String currentEmotion = "平静"; // 默认情绪
-        String currentBgm = null;
-        
-        for (String line : lines) {
-            line = line.trim();
-            if (line.isEmpty()) {
-                continue;
-            }
-            
-            // 检测BGM标签
-            Matcher bgmMatcher = BGM_PATTERN.matcher(line);
-            if (bgmMatcher.find()) {
-                currentBgm = bgmMatcher.group(1);
-                continue;
-            }
-            
-            // 检测角色标签
-            Matcher roleMatcher = ROLE_PATTERN.matcher(line);
-            if (roleMatcher.find()) {
-                currentRole = roleMatcher.group(1);
-            }
-            
-            // 检测情绪标签
-            Matcher emotionMatcher = EMOTION_PATTERN.matcher(line);
-            if (emotionMatcher.find()) {
-                currentEmotion = emotionMatcher.group(1);
-            }
-            
-            // 检测停顿标签
-            Matcher pauseMatcher = PAUSE_PATTERN.matcher(line);
-            Double pauseDuration = 0.0;
-            if (pauseMatcher.find()) {
-                pauseDuration = Double.parseDouble(pauseMatcher.group(1));
-            }
-            
-            // 检测音效标签
-            Matcher sfxMatcher = SFX_PATTERN.matcher(line);
-            String sfxTag = null;
-            if (sfxMatcher.find()) {
-                sfxTag = sfxMatcher.group(1);
-            }
-            
-            // 提取纯文本（移除所有标签）
-            String pureText = extractPureText(line);
-            
-            if (!pureText.isEmpty()) {
-                ThAudioProcessContext.PodcastSegment segment = ThAudioProcessContext.PodcastSegment.builder()
-                        .index(index++)
-                        .role(currentRole)
-                        .emotion(currentEmotion)
-                        .text(pureText)
-                        .pauseDuration(pauseDuration)
-                        .bgmTag(currentBgm)
-                        .sfxTag(sfxTag)
-                        .rawContent(line)
-                        .build();
-                
-                segments.add(segment);
-            }
-        }
-        
-        return segments;
-    }
-
-    /**
-     * 提取纯文本（移除所有标签）
-     */
-    private String extractPureText(String line) {
-        String text = line;
-        // 移除角色标签
-        text = text.replaceAll("\\[(主持人|嘉宾|旁白)\\]", "");
-        // 移除情绪标签
-        text = text.replaceAll("\\((轻快|严肃|慢速|快速|激动|平静)\\)", "");
-        // 移除停顿标签
-        text = text.replaceAll("\\[停顿[0-9.]+秒\\]", "");
-        // 移除BGM标签
-        text = text.replaceAll("\\[背景音乐：[^\\]]+\\]", "");
-        // 移除音效标签
-        text = text.replaceAll("\\[音效：[^\\]]+\\]", "");
-        
-        return text.trim();
     }
 }

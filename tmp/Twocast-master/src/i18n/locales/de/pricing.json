@@ -1,0 +1,20 @@
+{
+  "title": "Preise",
+  "description": "Wählen Sie einen Plan, um Credits zu kaufen. Entfesseln Sie Ihre Kreativität mit {{name}}",
+  "products": {
+    "features": {
+      "priority_generation_queue": "Priorisierte Generierungswarteschlange",
+      "no_watermark_on_video": "Kein Wasserzeichen auf dem Video",
+      "valid_for": "Gültig für {{expiresIn}} {{period}}"
+    }
+  },
+  "period": {
+    "day": "Tag",
+    "week": "Woche",
+    "month": "Monat",
+    "year": "Jahr"
+  },
+  "buy": "Kaufen",
+  "credit": "Kredit",
+  "up_to_images": "Bis zu {{cnt}} Audios"
+}

@@ -1,0 +1,131 @@
+{
+  "metadata": {
+    "name": "Twocast",
+    "title": "AI Podcast Generator - Create Engaging Podcasts Instantly | Twocast",
+    "description": "Transform any content into captivating two-person podcasts in minutes. Our AI Podcast Generator creates professional podcasts from URLs, documents, text, or topics with advanced AI technology.",
+    "keywords": "AI Podcast Generator, Twocast, podcast creation, AI podcast, two-person podcast, podcast from text, podcast from URL, podcast AI tool, instant podcast creation"
+  },
+  "header": {
+    "home": "Home",
+    "blog": "Blog",
+    "pricing": "Pricing",
+    "back-to-home": "Back to Home",
+    "playground": "Try Free",
+    "explore": "Podcast Gallery",
+    "features": "Features",
+    "How to": "How It Works",
+    "pro": "Pro Version"
+  },
+  "hero_section": {
+    "headline": "AI Podcast Generator - Turn Any Content Into Engaging Podcasts",
+    "sub_headline": "Create professional two-person podcasts from any source using our advanced AI Podcast Generator technology.",
+    "cta_button": "Start Creating Free",
+    "learn_more": "See How Our AI Podcast Generator Works",
+    "basic_version": "Try Free",
+    "pro_version": "Go Pro"
+  },
+  "intro_section": {
+    "headline": "The Future of AI Podcast Generator Technology is Here",
+    "sub_headline": "Revolutionary AI-Powered Content Transformation",
+    "description": "Our AI Podcast Generator transforms any written content into compelling podcast conversations instantly. This advanced AI Podcast Generator creates natural dialogue between two unique hosts, turning your URLs, documents, or ideas into professional podcasts—no recording studio required.",
+    "key_points": {
+      "point_1": "AI Podcast Generator converts any content: websites, documents, text, or topics into podcasts.",
+      "point_2": "Realistic conversations with distinct AI personalities and voices.",
+      "point_3": "Zero technical expertise needed—just upload and create with our AI Podcast Generator.",
+      "point_4": "Studio-quality podcasts delivered in minutes, not hours."
+    },
+    "cta_button": "Try Our AI Podcast Generator Now"
+  },
+  "feature_section": {
+    "headline": "AI Podcast Generator - Powerful Features for Perfect Podcasts",
+    "sub_headline": "Everything You Need for Professional AI Podcast Generator Creation",
+    "features": {
+      "feature_1": {
+        "title": "Universal Content Support",
+        "description": "Our AI Podcast Generator transforms websites, PDFs, Word documents, plain text, or even topic descriptions into engaging podcasts."
+      },
+      "feature_2": {
+        "title": "Intelligent AI Hosts",
+        "description": "Two distinct AI personalities create dynamic conversations with natural questions, insights, and engaging dialogue."
+      },
+      "feature_3": {
+        "title": "Lightning-Fast Generation",
+        "description": "Get your complete AI Podcast Generator results in minutes—from upload to download in record time."
+      },
+      "feature_4": {
+        "title": "Broadcast-Quality Audio",
+        "description": "Professional voice synthesis with perfect timing, natural pauses, and seamless conversation flow."
+      }
+    }
+  },
+  "explore_section": {
+    "headline": "AI Podcast Generator Examples - Listen to AI-Generated Podcasts",
+    "sub_headline": "Discover the quality and variety of our AI Podcast Generator creations."
+  },
+  "how_to_use_section": {
+    "headline": "How to Use Our AI Podcast Generator in 4 Simple Steps",
+    "sub_headline": "From Content to AI Podcast Generator Results in Minutes",
+    "steps": {
+      "step_1": "Upload your content: paste a URL, upload documents, or describe your topic to the AI Podcast Generator.",
+      "step_2": "Our AI Podcast Generator analyzes and structures your content for optimal podcast format.",
+      "step_3": "Customize podcast length, style, and host personalities with our AI Podcast Generator settings.",
+      "step_4": "Download your professional two-person podcast ready for publishing."
+    }
+  },
+  "playground_section": {
+    "headline": "Experience Our AI Podcast Generator",
+    "sub_headline": "Try our free AI Podcast Generator playground and create your first AI podcast right now."
+  },
+  "faq_section": {
+    "faqs": {
+      "faq_1": {
+        "question": "How does the AI Podcast Generator create realistic two-person conversations?",
+        "answer": "Our advanced AI Podcast Generator analyzes your content and generates natural dialogue between two unique hosts, each with distinct personalities, speaking styles, and perspectives. The AI Podcast Generator result is engaging conversations that sound authentically human."
+      },
+      "faq_2": {
+        "question": "What types of content work best with the AI Podcast Generator?",
+        "answer": "Almost any written content works with our AI Podcast Generator: blog posts, articles, research papers, website content, PDFs, Word documents, or even topic descriptions. The AI Podcast Generator adapts the conversation style to match your content type."
+      },
+      "faq_3": {
+        "question": "How quickly can the AI Podcast Generator create my finished podcast?",
+        "answer": "Most AI Podcast Generator results are ready in 2-5 minutes. Processing time depends on content length and complexity, but our AI Podcast Generator is always dramatically faster than traditional podcast production methods."
+      },
+      "faq_4": {
+        "question": "Can I personalize the AI Podcast Generator hosts and conversation style?",
+        "answer": "Absolutely! Our AI Podcast Generator offers multiple voice options, conversation tone adjustments (casual, professional, educational), and host personality customization to perfectly match your content and target audience."
+      },
+      "faq_5": {
+        "question": "Which file formats does the AI Podcast Generator support?",
+        "answer": "Our AI Podcast Generator supports PDFs, Word documents, text files, direct URL input, and plain text pasting. You can also simply describe your topic and let the AI Podcast Generator create the content and conversation."
+      },
+      "faq_6": {
+        "question": "Is the AI Podcast Generator suitable for business and educational content?",
+        "answer": "Yes! Businesses use our AI Podcast Generator to transform reports, training materials, and marketing content into engaging podcasts. Educators use the AI Podcast Generator to convert lectures and articles into accessible audio format for enhanced learning."
+      },
+      "faq_7": {
+        "question": "How natural are the AI Podcast Generator conversations?",
+        "answer": "Our AI Podcast Generator creates remarkably natural dialogue with appropriate questions, commentary, and interactive discussions. Listeners often can't distinguish our AI Podcast Generator results from real podcast conversations."
+      },
+      "faq_8": {
+        "question": "Can I edit the AI Podcast Generator output?",
+        "answer": "Yes! Download your AI Podcast Generator output as a standard audio file and edit it with any audio editing software. You can also regenerate with different AI Podcast Generator settings if needed."
+      },
+      "faq_9": {
+        "question": "What languages does the AI Podcast Generator support?",
+        "answer": "Our AI Podcast Generator currently specializes in English content and conversations to ensure the highest quality. Additional AI Podcast Generator language support is in development based on user demand and feedback."
+      },
+      "faq_10": {
+        "question": "Are there limits on AI Podcast Generator content length or duration?",
+        "answer": "Our AI Podcast Generator handles flexible content lengths—short articles become 5-10 minute podcasts, while comprehensive documents can generate 20-30+ minute episodes. The AI Podcast Generator optimizes podcast length to match your content's depth and complexity."
+      }
+    }
+  },
+  "footer": {
+    "change-locale": "Change Language",
+    "switch_language": "Switch Language",
+    "disclaimer": "Twocast is an innovative AI Podcast Generator platform. Transform any content into professional podcasts in minutes with our cutting-edge AI Podcast Generator technology."
+  },
+  "related-tweets": {
+    "h2": "What Our AI Podcast Generator Users Are Saying"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "title": "الأسعار",
+  "description": "اختر خطة لشراء أرصدة، أطلق إبداعك مع {{name}}",
+  "products": {
+    "features": {
+      "priority_generation_queue": "قائمة انتظار الأولوية",
+      "no_watermark_on_video": "بدون علامة مائية على الفيديو",
+      "valid_for": "صالحة لمدة {{expiresIn}} {{period}}"
+    }
+  },
+  "period": {
+    "day": "يوم",
+    "week": "أسبوع",
+    "month": "شهر",
+    "year": "سنة"
+  },
+  "buy": "اشترِ",
+  "credit": "رصيد",
+  "up_to_images": "حتى {{cnt}} مقاطع صوتية"
+}

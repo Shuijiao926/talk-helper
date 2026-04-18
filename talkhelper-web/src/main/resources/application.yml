@@ -86,10 +86,10 @@ talkhelper:
   tts:
     model: cosyvoice-v3.5-plus
     default-voice: longxiaochun
+    concurrency: 3
     voice-mapping:
-      "[主持人]": longxiaochun
-      "[嘉宾]": longshuo
-      "[旁白]": longyue
+      "[host]": longxiaochun
+      "[guest]": longshuo
   # 对象存储通用配置
   storage:
     default-bucket: talkhelper

@@ -1,0 +1,36 @@
+{
+  "outline": "개요",
+  "keyPoints": "핵심 포인트",
+  "scripts": "스크립트",
+  "click_play_button_to_start_listening": "재생 버튼을 클릭하여 듣기 시작하세요",
+  "role_host": "호스트",
+  "role_guest": "게스트",
+  "playing": "재생 중",
+  "paused": "일시 정지",
+  "tabs": {
+    "topic": "주제",
+    "link": "링크",
+    "upload_file": "파일 업로드",
+    "long_text": "긴 텍스트",
+    "front_page": "첫 페이지"
+  },
+  "placeholder": {
+    "topic": "관심 있는 주제를 입력하세요",
+    "link": "여기에 링크를 붙여넣으세요 (예: https://example.com)",
+    "upload_file": "파일을 업로드하세요",
+    "long_text": "여기에 긴 텍스트를 붙여넣으세요",
+    "upload_file_tips": "PDF, DOC, TXT 파일을 최대 10MB까지 지원합니다",
+    "front_page": "여기에 첫 페이지를 붙여넣으세요 (예: https://news.ycombinator.com/front)"
+  },
+  "platform": "플랫폼",
+  "voice_1": "음성 1",
+  "voice_2": "음성 2",
+  "output_language": "출력 언어",
+  "create_button": "팟캐스트 만들기",
+  "create_button_loading": "팟캐스트 생성 중...",
+  "create_button_success": "팟캐스트가 생성되었습니다",
+  "create_button_error": "팟캐스트 생성에 실패했습니다",
+  "more_voices_about": "{{platform}}에 대한 더 많은 음성",
+  "auto": "자동",
+  "depends_on_source_language": "출발어에 따라 다름"
+}

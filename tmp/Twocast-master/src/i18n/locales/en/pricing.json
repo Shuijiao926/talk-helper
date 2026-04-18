@@ -1,0 +1,20 @@
+{
+  "title": "Pricing",
+  "description": "Choose a plan to buy credits, Unleash your creativity with {{name}}",
+  "products": {
+    "features": {
+      "priority_generation_queue": "Priority generation queue",
+      "no_watermark_on_video": "No watermark on video",
+      "valid_for": "Valid for {{expiresIn}} {{period}}"
+    }
+  },
+  "period": {
+    "day": "day",
+    "week": "week",
+    "month": "month",
+    "year": "year"
+  },
+  "buy": "Buy",
+  "credit": "credit",
+  "up_to_images": "Up to {{cnt}} audios"
+}

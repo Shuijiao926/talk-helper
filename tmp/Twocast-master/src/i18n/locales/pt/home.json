@@ -1,0 +1,131 @@
+{
+  "metadata": {
+    "title": "Gerador de Podcast AI - Crie Podcasts Envolventes Instantaneamente | Twocast",
+    "description": "Transforme qualquer conteúdo em cativantes podcasts de duas pessoas em minutos. Nosso Gerador de Podcast AI cria podcasts profissionais a partir de URLs, documentos, textos ou tópicos com tecnologia avançada de IA.",
+    "keywords": "Gerador de Podcast AI, Twocast, criação de podcast, podcast AI, podcast de duas pessoas, podcast a partir de texto, podcast a partir de URL, ferramenta de podcast AI, criação instantânea de podcast",
+    "name": "Twocast"
+  },
+  "header": {
+    "home": "Início",
+    "blog": "Blog",
+    "pricing": "Preços",
+    "back-to-home": "Voltar para o Início",
+    "playground": "Experimente Grátis",
+    "explore": "Galeria de Podcasts",
+    "features": "Recursos",
+    "How to": "Como Funciona",
+    "pro": "Versão Pro"
+  },
+  "hero_section": {
+    "headline": "Gerador de Podcast AI - Transforme Qualquer Conteúdo em Podcasts Envolventes",
+    "sub_headline": "Crie podcasts profissionais de duas pessoas a partir de qualquer fonte usando nossa tecnologia avançada de Gerador de Podcast AI.",
+    "cta_button": "Comece a Criar Grátis",
+    "learn_more": "Veja Como Nosso Gerador de Podcast AI Funciona",
+    "basic_version": "Experimente Grátis",
+    "pro_version": "Vá para Pro"
+  },
+  "intro_section": {
+    "headline": "O Futuro da Tecnologia de Gerador de Podcast AI Está Aqui",
+    "sub_headline": "Transformação de Conteúdo Revolucionária com IA",
+    "description": "Nosso Gerador de Podcast AI transforma qualquer conteúdo escrito em conversas de podcast envolventes instantaneamente. Este Gerador de Podcast AI avançado cria diálogos naturais entre dois apresentadores únicos, transformando suas URLs, documentos ou ideias em podcasts profissionais — sem necessidade de estúdio de gravação.",
+    "key_points": {
+      "point_1": "O Gerador de Podcast AI converte qualquer conteúdo: websites, documentos, textos ou tópicos em podcasts.",
+      "point_2": "Conversas realistas com personalidades e vozes distintas de IA.",
+      "point_3": "Nenhuma expertise técnica necessária — apenas envie e crie com nosso Gerador de Podcast AI.",
+      "point_4": "Podcasts de qualidade de estúdio entregues em minutos, não horas."
+    },
+    "cta_button": "Experimente Nosso Gerador de Podcast AI Agora"
+  },
+  "feature_section": {
+    "headline": "Gerador de Podcast AI - Recursos Poderosos para Podcasts Perfeitos",
+    "sub_headline": "Tudo que Você Precisa para Criação Profissional com o Gerador de Podcast AI",
+    "features": {
+      "feature_1": {
+        "title": "Suporte Universal a Conteúdos",
+        "description": "Nosso Gerador de Podcast AI transforma websites, PDFs, documentos Word, texto simples ou até descrições de tópicos em podcasts envolventes."
+      },
+      "feature_2": {
+        "title": "Anfitriões Inteligentes de IA",
+        "description": "Duas personalidades de IA distintas criam conversas dinâmicas com perguntas naturais, insights e diálogos envolventes."
+      },
+      "feature_3": {
+        "title": "Geração Rápida",
+        "description": "Obtenha seus resultados completos do Gerador de Podcast AI em minutos — do upload ao download em tempo recorde."
+      },
+      "feature_4": {
+        "title": "Áudio de Qualidade Broadcast",
+        "description": "Síntese de voz profissional com temporização perfeita, pausas naturais e fluxo de conversa contínuo."
+      }
+    }
+  },
+  "explore_section": {
+    "headline": "Exemplos do Gerador de Podcast AI - Ouça Podcasts Gerados por IA",
+    "sub_headline": "Descubra a qualidade e variedade das criações do nosso Gerador de Podcast AI."
+  },
+  "how_to_use_section": {
+    "headline": "Como Usar Nosso Gerador de Podcast AI em 4 Passos Simples",
+    "sub_headline": "De Conteúdo a Resultados do Gerador de Podcast AI em Minutos",
+    "steps": {
+      "step_1": "Envie seu conteúdo: cole uma URL, envie documentos ou descreva seu tópico para o Gerador de Podcast AI.",
+      "step_2": "Nosso Gerador de Podcast AI analisa e estrutura seu conteúdo para o formato ideal de podcast.",
+      "step_3": "Personalize o comprimento, estilo e personalidades dos anfitriões com as configurações do nosso Gerador de Podcast AI.",
+      "step_4": "Baixe seu podcast profissional de duas pessoas pronto para publicação."
+    }
+  },
+  "playground_section": {
+    "headline": "Experimente Nosso Gerador de Podcast AI",
+    "sub_headline": "Experimente nosso playground gratuito do Gerador de Podcast AI e crie seu primeiro podcast AI agora mesmo."
+  },
+  "faq_section": {
+    "faqs": {
+      "faq_1": {
+        "question": "Como o Gerador de Podcast AI cria conversas realistas de duas pessoas?",
+        "answer": "Nosso avançado Gerador de Podcast AI analisa seu conteúdo e gera diálogos naturais entre dois apresentadores únicos, cada um com personalidades, estilos de fala e perspectivas distintas. O resultado do Gerador de Podcast AI são conversas envolventes que soam autenticamente humanas."
+      },
+      "faq_2": {
+        "question": "Que tipos de conteúdo funcionam melhor com o Gerador de Podcast AI?",
+        "answer": "Quase qualquer conteúdo escrito funciona com nosso Gerador de Podcast AI: posts de blog, artigos, trabalhos de pesquisa, conteúdo de websites, PDFs, documentos Word ou até descrições de tópicos. O Gerador de Podcast AI adapta o estilo da conversa para combinar com o seu tipo de conteúdo."
+      },
+      "faq_3": {
+        "question": "Com que rapidez o Gerador de Podcast AI pode criar meu podcast finalizado?",
+        "answer": "A maioria dos resultados do Gerador de Podcast AI está pronta em 2-5 minutos. O tempo de processamento depende do comprimento e complexidade do conteúdo, mas nosso Gerador de Podcast AI é sempre dramaticamente mais rápido que os métodos tradicionais de produção de podcast."
+      },
+      "faq_4": {
+        "question": "Posso personalizar os anfitriões e o estilo da conversa do Gerador de Podcast AI?",
+        "answer": "Com certeza! Nosso Gerador de Podcast AI oferece várias opções de voz, ajustes de tom de conversa (casual, profissional, educacional) e personalização da personalidade dos anfitriões para perfeitamente combinar com seu conteúdo e público-alvo."
+      },
+      "faq_5": {
+        "question": "Quais formatos de arquivo o Gerador de Podcast AI suporta?",
+        "answer": "Nosso Gerador de Podcast AI suporta PDFs, documentos Word, arquivos de texto, entrada direta de URL e colagem de texto simples. Você também pode simplesmente descrever seu tópico e deixar o Gerador de Podcast AI criar o conteúdo e a conversa."
+      },
+      "faq_6": {
+        "question": "O Gerador de Podcast AI é adequado para conteúdo empresarial e educacional?",
+        "answer": "Sim! Empresas usam nosso Gerador de Podcast AI para transformar relatórios, materiais de treinamento e conteúdo de marketing em podcasts envolventes. Educadores usam o Gerador de Podcast AI para converter palestras e artigos em formato de áudio acessível para aprendizagem aprimorada."
+      },
+      "faq_7": {
+        "question": "Quão naturais são as conversas do Gerador de Podcast AI?",
+        "answer": "Nosso Gerador de Podcast AI cria diálogos notavelmente naturais com perguntas apropriadas, comentários e discussões interativas. Os ouvintes muitas vezes não conseguem distinguir os resultados do nosso Gerador de Podcast AI das conversas reais de podcast."
+      },
+      "faq_8": {
+        "question": "Posso editar a saída do Gerador de Podcast AI?",
+        "answer": "Sim! Baixe sua saída do Gerador de Podcast AI como um arquivo de áudio padrão e edite-o com qualquer software de edição de áudio. Você também pode regenerar com diferentes configurações do Gerador de Podcast AI, se necessário."
+      },
+      "faq_9": {
+        "question": "Quais idiomas o Gerador de Podcast AI suporta?",
+        "answer": "Nosso Gerador de Podcast AI atualmente se especializa em conteúdo e conversas em inglês para garantir a mais alta qualidade. Suporte a outros idiomas do Gerador de Podcast AI está em desenvolvimento com base na demanda e feedback dos usuários."
+      },
+      "faq_10": {
+        "question": "Existem limites de comprimento ou duração para o conteúdo do Gerador de Podcast AI?",
+        "answer": "Nosso Gerador de Podcast AI lida com comprimentos de conteúdo flexíveis — artigos curtos se tornam podcasts de 5-10 minutos, enquanto documentos abrangentes podem gerar episódios de 20-30+ minutos. O Gerador de Podcast AI otimiza o comprimento do podcast para corresponder à profundidade e complexidade do seu conteúdo."
+      }
+    }
+  },
+  "footer": {
+    "change-locale": "Mudar Idioma",
+    "switch_language": "Trocar Idioma",
+    "disclaimer": "Twocast é uma plataforma inovadora de Gerador de Podcast AI. Transforme qualquer conteúdo em podcasts profissionais em minutos com nossa tecnologia de ponta de Gerador de Podcast AI."
+  },
+  "related-tweets": {
+    "h2": "O Que Nossos Usuários do Gerador de Podcast AI Estão Dizendo"
+  }
+}

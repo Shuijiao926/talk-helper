@@ -1,0 +1,9 @@
+{
+  "playing": "Giocando",
+  "volume": "Volume",
+  "playback_rate": "Velocità di riproduzione",
+  "playback_rate_tooltip": "Velocità di riproduzione",
+  "playback_rate_tooltip_mobile": "Velocità di riproduzione",
+  "collapse_player": "Riduci il lettore",
+  "close_player": "Chiudi il lettore"
+}

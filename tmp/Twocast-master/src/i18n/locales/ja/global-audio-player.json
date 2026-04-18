@@ -1,0 +1,9 @@
+{
+  "playing": "再生中",
+  "volume": "音量",
+  "playback_rate": "再生速度",
+  "playback_rate_tooltip": "再生速度",
+  "playback_rate_tooltip_mobile": "再生速度",
+  "collapse_player": "プレーヤーを折りたたむ",
+  "close_player": "プレーヤーを閉じる"
+}

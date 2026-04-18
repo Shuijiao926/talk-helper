@@ -1,0 +1,20 @@
+{
+  "title": "Цены",
+  "description": "Выберите план для покупки кредитов, Развивайте свое творчество с {{name}}",
+  "products": {
+    "features": {
+      "priority_generation_queue": "Очередь приоритетной генерации",
+      "no_watermark_on_video": "Без водяного знака на видео",
+      "valid_for": "Действует в течение {{expiresIn}} {{period}}"
+    }
+  },
+  "period": {
+    "day": "день",
+    "week": "неделя",
+    "month": "месяц",
+    "year": "год"
+  },
+  "buy": "Купить",
+  "credit": "кредит",
+  "up_to_images": "До {{cnt}} аудио"
+}

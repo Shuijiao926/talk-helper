@@ -1,0 +1,36 @@
+{
+  "outline": "大纲",
+  "keyPoints": "要点",
+  "scripts": "脚本",
+  "click_play_button_to_start_listening": "点击播放按钮开始收听",
+  "role_host": "主持人",
+  "role_guest": "嘉宾",
+  "playing": "正在播放",
+  "paused": "已暂停",
+  "tabs": {
+    "topic": "主题",
+    "link": "链接",
+    "upload_file": "上传文件",
+    "long_text": "长文本",
+    "front_page": "列表页"
+  },
+  "placeholder": {
+    "topic": "输入您感兴趣的主题",
+    "link": "在此粘贴您的链接（例如，https://example.com）",
+    "upload_file": "上传文件",
+    "long_text": "在此粘贴您的长文本",
+    "upload_file_tips": "支持 PDF、DOC、TXT 文件，最大 10MB",
+    "front_page": "在此粘贴你的主页（例如，https://news.ycombinator.com/front)"
+  },
+  "platform": "平台",
+  "voice_1": "声音 1",
+  "voice_2": "声音 2",
+  "output_language": "输出语言",
+  "create_button": "创建播客",
+  "create_button_loading": "正在创建播客...",
+  "create_button_success": "播客已创建",
+  "create_button_error": "创建播客失败",
+  "more_voices_about": "关于 {{platform}} 的更多声音",
+  "auto": "自动",
+  "depends_on_source_language": "根据源语言自动选择"
+}

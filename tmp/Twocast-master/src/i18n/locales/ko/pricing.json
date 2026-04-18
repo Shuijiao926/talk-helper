@@ -1,0 +1,20 @@
+{
+  "title": "가격",
+  "description": "크레딧을 구매할 계획을 선택하세요. {{name}}와 함께 창의력을 발휘하세요.",
+  "products": {
+    "features": {
+      "priority_generation_queue": "우선 생성 대기열",
+      "no_watermark_on_video": "비디오에 워터마크 없음",
+      "valid_for": "{{expiresIn}} {{period}} 동안 유효"
+    }
+  },
+  "period": {
+    "day": "일",
+    "week": "주",
+    "month": "개월",
+    "year": "년"
+  },
+  "buy": "구매",
+  "credit": "크레딧",
+  "up_to_images": "최대 {{cnt}} 오디오까지 사용 가능"
+}

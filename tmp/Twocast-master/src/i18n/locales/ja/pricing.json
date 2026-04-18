@@ -1,0 +1,20 @@
+{
+  "title": "価格",
+  "description": "{{name}}であなたのクリエイティビティを解放するために、クレジットを購入するプランを選択してください",
+  "products": {
+    "features": {
+      "priority_generation_queue": "優先生成キュー",
+      "no_watermark_on_video": "ビデオに透かしなし",
+      "valid_for": "{{expiresIn}} {{period}}まで有効"
+    }
+  },
+  "period": {
+    "day": "日",
+    "week": "週",
+    "month": "月",
+    "year": "年"
+  },
+  "buy": "購入",
+  "credit": "クレジット",
+  "up_to_images": "{{cnt}}音声まで可能"
+}

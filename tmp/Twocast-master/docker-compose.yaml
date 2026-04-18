@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # container_name: twocast_app
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: /bin/sh -c "yarn && yarn start"
+    restart: unless-stopped
+    networks:
+      - twocast-network
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:alpine
+    # container_name: redis
+    expose:
+      - '6379'
+    command: ["redis-server", "--loglevel", "warning"]
+    restart: always
+    networks:
+      - twocast-network
+
+  textract:
+    image: bespaloff/textract-rest-api:v4.0.2
+    # container_name: textract
+    expose:
+      - '8080'
+    environment:
+      - PORT=8080
+    restart: always
+    networks:
+      - twocast-network
+
+  ffmpeg-api:
+    image: kazhar/ffmpeg-api
+    # container_name: ffmpeg-api
+    expose:
+      - '8081'
+    environment:
+      - PORT=8081
+    restart: always
+    networks:
+      - twocast-network
+
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=twocast
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - twocast-network
+
+volumes:
+  postgres_data:
+
+networks:
+  twocast-network:
+    driver: bridge 

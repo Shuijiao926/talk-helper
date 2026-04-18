@@ -1,0 +1,20 @@
+{
+  "title": "定价",
+  "description": "选择一个计划购买积分，释放你的创造力与 {{name}}",
+  "products": {
+    "features": {
+      "priority_generation_queue": "优先生成队列",
+      "no_watermark_on_video": "视频无水印",
+      "valid_for": "有效期为 {{expiresIn}} {{period}}"
+    }
+  },
+  "period": {
+    "day": "天",
+    "week": "周",
+    "month": "月",
+    "year": "年"
+  },
+  "buy": "购买",
+  "credit": "积分",
+  "up_to_images": "最多 {{cnt}} 音频"
+}

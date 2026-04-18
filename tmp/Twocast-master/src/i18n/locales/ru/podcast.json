@@ -1,0 +1,36 @@
+{
+  "outline": "Контур",
+  "keyPoints": "Ключевые моменты",
+  "scripts": "Скрипты",
+  "click_play_button_to_start_listening": "Нажмите кнопку воспроизведения, чтобы начать прослушивание",
+  "role_host": "Ведущий",
+  "role_guest": "Гость",
+  "playing": "Играет",
+  "paused": "Пауза",
+  "tabs": {
+    "topic": "Тема",
+    "link": "Ссылка",
+    "upload_file": "Загрузить файл",
+    "long_text": "Длинный текст",
+    "front_page": "Главная страница"
+  },
+  "placeholder": {
+    "topic": "Введите интересующую вас тему",
+    "link": "Вставьте вашу ссылку здесь (например, https://example.com)",
+    "upload_file": "Загрузить файл",
+    "long_text": "Вставьте ваш длинный текст здесь",
+    "upload_file_tips": "Поддерживает файлы PDF, DOC, TXT до 10 МБ",
+    "front_page": "Вставьте свою главную страницу здесь (например, https://news.ycombinator.com/front)"
+  },
+  "platform": "Платформа",
+  "voice_1": "Голос 1",
+  "voice_2": "Голос 2",
+  "output_language": "Язык вывода",
+  "create_button": "Создать подкаст",
+  "create_button_loading": "Создание подкаста...",
+  "create_button_success": "Подкаст создан",
+  "create_button_error": "Не удалось создать подкаст",
+  "more_voices_about": "Больше голосов о {{platform}}",
+  "auto": "Авто",
+  "depends_on_source_language": "Зависит от языка источника"
+}

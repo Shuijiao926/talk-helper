@@ -1,0 +1,20 @@
+{
+  "title": "Fiyatlandırma",
+  "description": "Kredileri satın almak için bir plan seçin, {{name}} ile yaratıcılığınızı ortaya çıkarın",
+  "products": {
+    "features": {
+      "priority_generation_queue": "Öncelikli üretim sırası",
+      "no_watermark_on_video": "Videoda su işareti yok",
+      "valid_for": "{{expiresIn}} {{period}} için geçerli"
+    }
+  },
+  "period": {
+    "day": "gün",
+    "week": "hafta",
+    "month": "ay",
+    "year": "yıl"
+  },
+  "buy": "Satın Al",
+  "credit": "kredi",
+  "up_to_images": "En fazla {{cnt}} ses kaydı için"
+}

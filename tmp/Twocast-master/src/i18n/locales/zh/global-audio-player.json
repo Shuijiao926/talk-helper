@@ -1,0 +1,9 @@
+{
+  "playing": "播放",
+  "volume": "音量",
+  "playback_rate": "播放速度",
+  "playback_rate_tooltip": "播放速度",
+  "playback_rate_tooltip_mobile": "播放速度",
+  "collapse_player": "收起播放器",
+  "close_player": "关闭播放器"
+}

@@ -26,6 +26,11 @@ public class ThTtsConfig {
     private String defaultVoice = "longxiaochun";
 
     /**
+     * TTS 并行度（对标 TwoCast 的 p-limit concurrency）
+     */
+    private int concurrency = 3;
+
+    /**
      * 角色→音色映射
      */
     private Map<String, String> voiceMapping = new HashMap<>();

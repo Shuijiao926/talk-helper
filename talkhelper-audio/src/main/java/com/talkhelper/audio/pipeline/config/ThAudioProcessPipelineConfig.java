@@ -4,6 +4,7 @@ import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import com.talkhelper.audio.pipeline.handler.*;
 import com.talkhelper.common.config.ThStorageConfig;
 import com.talkhelper.common.storage.ThObjectStorageFactory;
+import com.talkhelper.common.tts.ThTtsConfig;
 import com.talkhelper.common.tts.ThTtsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,19 +12,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 /**
- * 音频处理管道配置
- * 定义7个处理器的执行顺序
+ * 音频处理管道配置（简化版 - 对标 TwoCast）
+ * 3 个处理器：脚本解析 → 并行TTS → 拼接上传
  */
 @Configuration
 @RequiredArgsConstructor
 public class ThAudioProcessPipelineConfig {
 
     private final ThTtsService ttsService;
+    private final ThTtsConfig ttsConfig;
     private final ThObjectStorageFactory storageFactory;
     private final ThStorageConfig storageConfig;
 
     /**
-     * 步骤1：脚本结构化解析处理器
+     * 步骤1：脚本 JSON 解析
      */
     @Bean
     @Order(1)
@@ -32,55 +34,19 @@ public class ThAudioProcessPipelineConfig {
     }
 
     /**
-     * 步骤2：文本分段切割处理器
+     * 步骤2：并行 TTS 语音合成
      */
     @Bean
     @Order(2)
-    public ThAudioProcessHandler textFragmentHandler() {
-        return new ThTextFragmentHandler();
+    public ThAudioProcessHandler ttsSynthesisHandler() {
+        return new ThTtsSynthesisHandler(ttsService, ttsConfig);
     }
 
     /**
-     * 步骤3：TTS语音合成处理器
+     * 步骤3：音频拼接 + 上传
      */
     @Bean
     @Order(3)
-    public ThAudioProcessHandler ttsSynthesisHandler() {
-        return new ThTtsSynthesisHandler(ttsService);
-    }
-
-    /**
-     * 步骤4：静音停顿插入处理器
-     */
-    @Bean
-    @Order(4)
-    public ThAudioProcessHandler pauseInsertionHandler() {
-        return new ThPauseInsertionHandler();
-    }
-
-    /**
-     * 步骤5：人声音频拼接处理器
-     */
-    @Bean
-    @Order(5)
-    public ThAudioProcessHandler vocalConcatHandler() {
-        return new ThVocalConcatHandler();
-    }
-
-    /**
-     * 步骤6：多轨混音处理器
-     */
-    @Bean
-    @Order(6)
-    public ThAudioProcessHandler audioMixingHandler() {
-        return new ThAudioMixingHandler();
-    }
-
-    /**
-     * 步骤7：音频后期处理处理器
-     */
-    @Bean
-    @Order(7)
     public ThAudioProcessHandler audioFinalizeHandler() {
         return new ThAudioFinalizeHandler(storageFactory, storageConfig);
     }

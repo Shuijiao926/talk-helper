@@ -1,0 +1,9 @@
+{
+  "playing": "Играть",
+  "volume": "Громкость",
+  "playback_rate": "Скорость воспроизведения",
+  "playback_rate_tooltip": "Скорость воспроизведения",
+  "playback_rate_tooltip_mobile": "Скорость воспроизведения",
+  "collapse_player": "Свернуть проигрыватель",
+  "close_player": "Закрыть проигрыватель"
+}

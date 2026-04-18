@@ -1,0 +1,36 @@
+{
+  "outline": "Aperçu",
+  "keyPoints": "Points Clés",
+  "scripts": "Scénarios",
+  "click_play_button_to_start_listening": "Cliquez sur le bouton lecture pour commencer à écouter",
+  "role_host": "Hôte",
+  "role_guest": "Invité",
+  "playing": "En cours de lecture",
+  "paused": "En pause",
+  "tabs": {
+    "topic": "Sujet",
+    "link": "Lien",
+    "upload_file": "Télécharger un fichier",
+    "long_text": "Long texte",
+    "front_page": "Page d'accueil"
+  },
+  "placeholder": {
+    "topic": "Entrez le sujet qui vous intéresse",
+    "link": "Collez votre lien ici (par exemple, https://example.com)",
+    "upload_file": "Téléchargez un fichier",
+    "long_text": "Collez votre texte long ici",
+    "upload_file_tips": "Prend en charge les fichiers PDF, DOC, TXT jusqu'à 10 Mo",
+    "front_page": "Collez votre page d'accueil ici (par exemple, https://news.ycombinator.com/front)"
+  },
+  "platform": "Plateforme",
+  "voice_1": "Voix 1",
+  "voice_2": "Voix 2",
+  "output_language": "Langue de sortie",
+  "create_button": "Créer un Podcast",
+  "create_button_loading": "Création du Podcast...",
+  "create_button_success": "Podcast créé",
+  "create_button_error": "Échec de la création du Podcast",
+  "more_voices_about": "Plus de voix sur {{platform}}",
+  "auto": "Auto",
+  "depends_on_source_language": "Dépend de la langue source"
+}

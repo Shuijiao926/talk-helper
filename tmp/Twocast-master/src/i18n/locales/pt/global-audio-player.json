@@ -1,0 +1,9 @@
+{
+  "playing": "Jogar",
+  "volume": "Volume",
+  "playback_rate": "Taxa de Reprodução",
+  "playback_rate_tooltip": "Taxa de Reprodução",
+  "playback_rate_tooltip_mobile": "Taxa de Reprodução",
+  "collapse_player": "Reduzir Reprodutor",
+  "close_player": "Fechar Reprodutor"
+}

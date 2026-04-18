@@ -1,0 +1,138 @@
+{
+    "audio": {
+      "input": {
+        "title": "Food delivery platform commissions are too high! Can we build a digital stall that belongs to workers?",
+        "outline": "",
+        "key_points": "",
+        "script": [
+          {
+            "role": "host",
+            "text": "Hey, you know what? I recently saw a post online saying that food delivery platform commissions are too high, and merchants can barely handle it. The guy suggested using a DAO approach to create a zero-commission platform. Do you think that would work?"
+          },
+          {
+            "role": "guest",
+            "text": "Oh, that one. Yeah, I saw it. The post mentioned platforms taking about 30% commission, and merchants complaining it's more expensive than rent. So, he wants to create a non-profit DAO where merchants, delivery riders, and users can trade directly without such high fees."
+          },
+          {
+            "role": "host",
+            "text": "Exactly, I mean, these commissions are ridiculously high. Do you think merchants would be more willing to use this new platform if they could save that money?"
+          },
+          {
+            "role": "guest",
+            "text": "Well, maybe. Merchants already feel the commissions are high, and if they could save 20% to 30%, they'd definitely be happier. They could offer better deals to customers, and riders could earn more. You know, the platform is just taking a cut in the middle, and without that, everyone benefits."
+          },
+          {
+            "role": "host",
+            "text": "That sounds good, but I remember someone in the post asking how the platform would operate. It's not completely free, right?"
+          },
+          {
+            "role": "guest",
+            "text": "Right, it's not running on pure goodwill. The poster said they'd take 5% from each transaction and put it into the DAO to reward people who contribute to the platform. Like those doing promotion, marketing, development, and such."
+          },
+          {
+            "role": "host",
+            "text": "Oh, I see. So what exactly is this DAO thing? Sounds pretty fancy."
+          },
+          {
+            "role": "guest",
+            "text": "Well, DAO is a decentralized autonomous organization where everyone votes on decisions. It's not controlled by one person, but rather through multi-party negotiation. Like a community where everyone maintains the platform's development. Both merchants and users can participate."
+          },
+          {
+            "role": "host",
+            "text": "That's interesting. But someone replied asking how the platform would handle disputes. If there are problems, who would manage them?"
+          },
+          {
+            "role": "guest",
+            "text": "Yeah, that's definitely a challenge. The post mentioned handling it like a marketplace where merchants and buyers resolve issues themselves. If they can't work it out, they'd seek external arbitration. The platform wouldn't manage everything."
+          },
+          {
+            "role": "host",
+            "text": "I understand. I mean, like Meituan now has a rating system and such. Would this new platform need something similar?"
+          },
+          {
+            "role": "guest",
+            "text": "Yes, they mentioned creating a reputation system. Merchants and riders would stake some tokens first. Reward good behavior, punish bad. But some people said it's difficult - even Taobao's system couldn't stop scammers."
+          },
+          {
+            "role": "host",
+            "text": "Right, what about costs? Building a platform costs money. Servers, promotion, how would they handle that?"
+          },
+          {
+            "role": "guest",
+            "text": "Well, the guy suggested making it P2P, not needing big servers, letting merchants form their own network. Save some money. But people still questioned it - promotion costs are too high. Without money for ads, merchants won't come."
+          },
+          {
+            "role": "host",
+            "text": "Right, I remember someone mentioning policy issues. Would the government allow an unregulated platform?"
+          },
+          {
+            "role": "guest",
+            "text": "Exactly. Many replies said this probably wouldn't work in China. The reason Meituan survives is because it can handle taxes and such. If it's autonomous, no taxes, it would probably get shut down."
+          },
+          {
+            "role": "host",
+            "text": "What about abroad? Or outside the wall?"
+          },
+          {
+            "role": "guest",
+            "text": "Maybe try that. But there are still risks. Someone mentioned similar apps abroad that got shut down. The key is, it's hard to change user habits. People are used to Meituan, who would use a new platform?"
+          },
+          {
+            "role": "host",
+            "text": "You're right. What about cold start? How would they get people initially? Would merchants and riders try it?"
+          },
+          {
+            "role": "guest",
+            "text": "Well, they said merchants can join almost cost-free, so they might try. Like a small example, merchants in one building created a WeChat group and traded directly. But scaling to nationwide is difficult."
+          },
+          {
+            "role": "host",
+            "text": "Oh, so it sounds feasible on a small scale. How did big platforms get started?"
+          },
+          {
+            "role": "guest",
+            "text": "Meituan started by burning money. Subsidizing merchants, users, then monopolizing. It's not a technical problem, it's operations. Having a good idea isn't enough without promotion, no one would know about it."
+          },
+          {
+            "role": "host",
+            "text": "So do you think this idea is reliable? What if it becomes the dragon it's trying to slay?"
+          },
+          {
+            "role": "guest",
+            "text": "Well, I mean, the ideal is beautiful, but reality is harsh. The dragon slayer might become the dragon. The key is, trust is hard to build. Users don't trust the platform, merchants don't come, riders don't deliver, it's a death spiral."
+          },
+          {
+            "role": "host",
+            "text": "Right, so as users, are we being exploited? Could this platform make our money go further?"
+          },
+          {
+            "role": "guest",
+            "text": "Maybe. But some things need to make money. Like food delivery, it's convenient, but someone needs to maintain the platform. With complete autonomy, who's responsible when things go wrong?"
+          },
+          {
+            "role": "host",
+            "text": "Hmm, would you support this idea?"
+          },
+          {
+            "role": "guest",
+            "text": "I support trying it, but be realistic. Start with small communities, don't try to do everything at once. Technology can solve part of it, but operations, regulation, these are the real problems."
+          },
+          {
+            "role": "host",
+            "text": "Alright, after talking so much, I find it quite enlightening. Let's talk about other interesting ideas from the internet next time."
+          },
+          {
+            "role": "guest",
+            "text": "Sure, no problem. There's always something new."
+          }
+        ]
+      },
+      "updated_at": "2025-06-17T15:16:52.910Z",
+      "try_count": 8,
+      "error": "",
+      "output": {
+        "location": "https://aisaas.nots.top/vs68d90c-fd9c-4c90-9307-33c81fb11da4-1750173403390.mp3",
+        "duration": 308.985125
+      }
+    }
+  }

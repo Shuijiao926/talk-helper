@@ -1,0 +1,20 @@
+{
+  "title": "Prezzi",
+  "description": "Scegli un piano per comprare crediti, Libera la tua creatività con {{name}}",
+  "products": {
+    "features": {
+      "priority_generation_queue": "Coda di generazione prioritaria",
+      "no_watermark_on_video": "Nessuna filigrana nel video",
+      "valid_for": "Valido per {{expiresIn}} {{period}}"
+    }
+  },
+  "period": {
+    "day": "giorno",
+    "week": "settimana",
+    "month": "mese",
+    "year": "anno"
+  },
+  "buy": "Acquista",
+  "credit": "credito",
+  "up_to_images": "Fino a {{cnt}} audio"
+}

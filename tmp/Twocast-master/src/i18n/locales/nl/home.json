@@ -1,0 +1,131 @@
+{
+  "metadata": {
+    "title": "AI Podcast Generator - Maak Direct Boeiende Podcasts | Twocast",
+    "description": "Transformeer elke inhoud in meeslepende twee-persoonspodcasts in enkele minuten. Onze AI Podcast Generator creëert professionele podcasts van URL's, documenten, tekst of onderwerpen met geavanceerde AI-technologie.",
+    "keywords": "AI Podcast Generator, Twocast, podcast creatie, AI podcast, twee-persoon podcast, podcast uit tekst, podcast uit URL, podcast AI tool, directe podcast creatie",
+    "name": "Twocast"
+  },
+  "header": {
+    "home": "Startpagina",
+    "blog": "Blog",
+    "pricing": "Prijsstelling",
+    "back-to-home": "Terug naar Startpagina",
+    "playground": "Probeer Gratis",
+    "explore": "Podcastgalerij",
+    "features": "Kenmerken",
+    "How to": "Hoe Het Werkt",
+    "pro": "Pro Versie"
+  },
+  "hero_section": {
+    "headline": "AI Podcast Generator - Zet Elke Inhoud Om In Boeiende Podcasts",
+    "sub_headline": "Creëer professionele twee-persoonspodcasts van elke bron met onze geavanceerde AI Podcast Generator technologie.",
+    "cta_button": "Gratis Aanmaken",
+    "learn_more": "Zie Hoe Onze AI Podcast Generator Werkt",
+    "basic_version": "Probeer Gratis",
+    "pro_version": "Ga Pro"
+  },
+  "intro_section": {
+    "headline": "De Toekomst van AI Podcast Generator Technologie is Hier",
+    "sub_headline": "Revolutionaire AI-Aangedreven Inhoudstransformatie",
+    "description": "Onze AI Podcast Generator transformeert elke geschreven inhoud in meeslepende podcastgesprekken in een oogwenk. Deze geavanceerde AI Podcast Generator creëert natuurlijke dialogen tussen twee unieke hosts en maakt professionele podcasts van uw URL's, documenten of ideeën—geen opnamestudio vereist.",
+    "key_points": {
+      "point_1": "AI Podcast Generator converteert elke inhoud: websites, documenten, tekst of onderwerpen in podcasts.",
+      "point_2": "Realistische gesprekken met verschillende AI-personaliteiten en stemmen.",
+      "point_3": "Geen technische expertise vereist—upload eenvoudig en creëer met onze AI Podcast Generator.",
+      "point_4": "Studio-kwaliteit podcasts worden in enkele minuten geleverd, niet uren."
+    },
+    "cta_button": "Probeer Onze AI Podcast Generator Nu"
+  },
+  "feature_section": {
+    "headline": "AI Podcast Generator - Krachtige Kenmerken voor Perfecte Podcasts",
+    "sub_headline": "Alles Wat Je Nodig Hebt voor Professionele AI Podcast Generator Creatie",
+    "features": {
+      "feature_1": {
+        "title": "Universele Inhouds Ondersteuning",
+        "description": "Onze AI Podcast Generator transformeert websites, PDF's, Word-documenten, platte tekst of zelfs onderwerp beschrijvingen in boeiende podcasts."
+      },
+      "feature_2": {
+        "title": "Intelligente AI Hosts",
+        "description": "Twee verschillende AI-personaliteiten creëren dynamische gesprekken met natuurlijke vragen, inzichten en boeiende dialogen."
+      },
+      "feature_3": {
+        "title": "Bliksem Snelle Generatie",
+        "description": "Krijg je complete AI Podcast Generator resultaten in enkele minuten—van uploaden tot downloaden in recordtijd."
+      },
+      "feature_4": {
+        "title": "Uitzendkwaliteit Audio",
+        "description": "Professionele stemsynthetisering met perfecte timing, natuurlijke pauzes en een naadloze gespreksflow."
+      }
+    }
+  },
+  "explore_section": {
+    "headline": "AI Podcast Generator Voorbeelden - Luister naar AI-Gegenereerde Podcasts",
+    "sub_headline": "Ontdek de kwaliteit en variëteit van onze AI Podcast Generator creaties."
+  },
+  "how_to_use_section": {
+    "headline": "Hoe Onze AI Podcast Generator Te Gebruiken in 4 Eenvoudige Stappen",
+    "sub_headline": "Van Inhoud naar AI Podcast Generator Resultaten in Minuten",
+    "steps": {
+      "step_1": "Upload je inhoud: plak een URL, upload documenten of beschrijf je onderwerp aan de AI Podcast Generator.",
+      "step_2": "Onze AI Podcast Generator analyseert en structureert je inhoud voor het optimale podcastformaat.",
+      "step_3": "Pas de podcastlengte, stijl en hostpersonaliteiten aan met onze AI Podcast Generator instellingen.",
+      "step_4": "Download je professionele twee-persoon podcast klaar voor publicatie."
+    }
+  },
+  "playground_section": {
+    "headline": "Ervaar Onze AI Podcast Generator",
+    "sub_headline": "Probeer onze gratis AI Podcast Generator speelruimte en maak nu je eerste AI podcast."
+  },
+  "faq_section": {
+    "faqs": {
+      "faq_1": {
+        "question": "Hoe creëert de AI Podcast Generator realistische twee-persoon gesprekken?",
+        "answer": "Onze geavanceerde AI Podcast Generator analyseert je inhoud en genereert natuurlijke dialogen tussen twee unieke hosts, elk met verschillende persoonlijkheden, spreekstijlen en perspectieven. Het resultaat van de AI Podcast Generator zijn boeiende gesprekken die authentiek menselijk klinken."
+      },
+      "faq_2": {
+        "question": "Welke soorten inhoud werken het beste met de AI Podcast Generator?",
+        "answer": "Bijna elke geschreven inhoud werkt met onze AI Podcast Generator: blogposts, artikelen, onderzoeksdocumenten, website-inhoud, PDF's, Word-documenten of zelfs onderwerp beschrijvingen. De AI Podcast Generator past de gespreksstijl aan om overeen te komen met jouw inhoudstype."
+      },
+      "faq_3": {
+        "question": "Hoe snel kan de AI Podcast Generator mijn voltooide podcast creëren?",
+        "answer": "De meeste AI Podcast Generator resultaten zijn binnen 2-5 minuten klaar. De verwerkingstijd hangt af van de lengte en complexiteit van de inhoud, maar onze AI Podcast Generator is altijd veel sneller dan traditionele podcastproductiemethoden."
+      },
+      "faq_4": {
+        "question": "Kan ik de hosts en gespreksstijl van de AI Podcast Generator personaliseren?",
+        "answer": "Zeker! Onze AI Podcast Generator biedt meerdere stemopties, aanpassingen van de gespreks toon (casual, professioneel, educatief) en personalisering van hosts om perfect aan te sluiten bij jouw inhoud en doelgroep."
+      },
+      "faq_5": {
+        "question": "Welke bestandsformaten ondersteunt de AI Podcast Generator?",
+        "answer": "Onze AI Podcast Generator ondersteunt PDF's, Word-documenten, tekstbestanden, directe URL-invoer en platte tekstplakken. Je kunt ook gewoon je onderwerp beschrijven en de AI Podcast Generator de inhoud en het gesprek laten creëren."
+      },
+      "faq_6": {
+        "question": "Is de AI Podcast Generator geschikt voor zakelijke en educatieve inhoud?",
+        "answer": "Ja! Bedrijven gebruiken onze AI Podcast Generator om rapporten, trainingsmaterialen en marketinginhoud om te zetten in boeiende podcasts. Educatoren gebruiken de AI Podcast Generator om lezingen en artikelen om te zetten in toegankelijke audioformaten voor verbeterd leren."
+      },
+      "faq_7": {
+        "question": "Hoe natuurlijk zijn de gesprekken van de AI Podcast Generator?",
+        "answer": "Onze AI Podcast Generator creëert opmerkelijk natuurlijke dialogen met passende vragen, commentaar en interactieve discussies. Luisteraars kunnen vaak onze AI Podcast Generator resultaten niet onderscheiden van echte podcastgesprekken."
+      },
+      "faq_8": {
+        "question": "Kan ik de output van de AI Podcast Generator bewerken?",
+        "answer": "Ja! Download je AI Podcast Generator output als een standaard audiobestand en bewerk het met elke audio-bewerkingssoftware. Je kunt ook regenereren met andere AI Podcast Generator instellingen indien nodig."
+      },
+      "faq_9": {
+        "question": "Welke talen ondersteunt de AI Podcast Generator?",
+        "answer": "Onze AI Podcast Generator is momenteel gespecialiseerd in Engelse inhoud en gesprekken om de hoogste kwaliteit te waarborgen. Extra taalondersteuning voor de AI Podcast Generator is in ontwikkeling op basis van de vraag en feedback van gebruikers."
+      },
+      "faq_10": {
+        "question": "Zijn er limieten op de inhouds lengte of duur van de AI Podcast Generator?",
+        "answer": "Onze AI Podcast Generator kan flexibele inhoudslengtes aan—korte artikelen worden 5-10 minuten podcasts, terwijl uitgebreide documenten 20-30+ minuten afleveringen kunnen genereren. De AI Podcast Generator optimaliseert de podcastlengte om overeen te komen met de diepte en complexiteit van jouw inhoud."
+      }
+    }
+  },
+  "footer": {
+    "change-locale": "Wijzig Taal",
+    "switch_language": "Taal Wisselen",
+    "disclaimer": "Twocast is een innovatieve AI Podcast Generator platform. Transformeer elke inhoud in professionele podcasts in enkele minuten met onze geavanceerde AI Podcast Generator technologie."
+  },
+  "related-tweets": {
+    "h2": "Wat Onze AI Podcast Generator Gebruikers Zeggen"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "playing": "Spielen",
+  "volume": "Lautstärke",
+  "playback_rate": "Wiedergabegeschwindigkeit",
+  "playback_rate_tooltip": "Wiedergabegeschwindigkeit",
+  "playback_rate_tooltip_mobile": "Wiedergabegeschwindigkeit",
+  "collapse_player": "Player minimieren",
+  "close_player": "Player schließen"
+}

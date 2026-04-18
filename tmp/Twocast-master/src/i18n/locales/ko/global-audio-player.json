@@ -1,0 +1,9 @@
+{
+  "playing": "재생 중",
+  "volume": "볼륨",
+  "playback_rate": "재생 속도",
+  "playback_rate_tooltip": "재생 속도",
+  "playback_rate_tooltip_mobile": "재생 속도",
+  "collapse_player": "플레이어 축소",
+  "close_player": "플레이어 닫기"
+}

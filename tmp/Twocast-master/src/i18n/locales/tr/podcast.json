@@ -1,0 +1,36 @@
+{
+  "outline": "Ana Hat",
+  "keyPoints": "Ana Noktalar",
+  "scripts": "Senaryolar",
+  "click_play_button_to_start_listening": "Dinlemeye başlamak için oynat butonuna tıklayın",
+  "role_host": "Sunucu",
+  "role_guest": "Misafir",
+  "playing": "Çalıyor",
+  "paused": "Duraklatıldı",
+  "tabs": {
+    "topic": "Konu",
+    "link": "Bağlantı",
+    "upload_file": "Dosya Yükle",
+    "long_text": "Uzun Metin",
+    "front_page": "Ana Sayfa"
+  },
+  "placeholder": {
+    "topic": "İlgilendiğiniz konuyu girin",
+    "link": "Bağlantınızı buraya yapıştırın (örneğin, https://example.com)",
+    "upload_file": "Bir dosya yükleyin",
+    "long_text": "Uzun metninizi buraya yapıştırın",
+    "upload_file_tips": "10MB'a kadar PDF, DOC, TXT dosyalarını destekler",
+    "front_page": "Buraya ana sayfanızı yapıştırın (örneğin, https://news.ycombinator.com/front)"
+  },
+  "platform": "Platform",
+  "voice_1": "Ses 1",
+  "voice_2": "Ses 2",
+  "output_language": "Çıktı Dili",
+  "create_button": "Podcast Oluştur",
+  "create_button_loading": "Podcast Oluşturuluyor...",
+  "create_button_success": "Podcast Oluşturuldu",
+  "create_button_error": "Podcast Oluşturulamadı",
+  "more_voices_about": "{{platform}} hakkında daha fazla ses",
+  "auto": "Otomatik",
+  "depends_on_source_language": "Kaynak dile bağlıdır"
+}

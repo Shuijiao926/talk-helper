@@ -1,0 +1,36 @@
+{
+  "outline": "アウトライン",
+  "keyPoints": "重要なポイント",
+  "scripts": "スクリプト",
+  "click_play_button_to_start_listening": "再生ボタンをクリックして聞き始める",
+  "role_host": "ホスト",
+  "role_guest": "ゲスト",
+  "playing": "再生中",
+  "paused": "一時停止",
+  "tabs": {
+    "topic": "トピック",
+    "link": "リンク",
+    "upload_file": "ファイルをアップロード",
+    "long_text": "長文",
+    "front_page": "フロントページ"
+  },
+  "placeholder": {
+    "topic": "興味のあるトピックを入力してください",
+    "link": "リンクをここに貼り付けてください（例：https://example.com）",
+    "upload_file": "ファイルをアップロード",
+    "long_text": "長文をここに貼り付けてください",
+    "upload_file_tips": "PDF、DOC、TXTファイルに対応（最大10MB）",
+    "front_page": "フロントページをここに貼り付けてください（例： https://news.ycombinator.com/front)"
+  },
+  "platform": "プラットフォーム",
+  "voice_1": "音声1",
+  "voice_2": "音声2",
+  "output_language": "出力言語",
+  "create_button": "ポッドキャストを作成",
+  "create_button_loading": "ポッドキャストを作成中...",
+  "create_button_success": "ポッドキャストが作成されました",
+  "create_button_error": "ポッドキャストの作成に失敗しました",
+  "more_voices_about": "{{platform}}に関する他の音声",
+  "auto": "自動",
+  "depends_on_source_language": "ソース言語に依存"
+}
