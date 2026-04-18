@@ -1,6 +1,7 @@
 package com.talkhelper.task.worker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.talkhelper.audio.service.ThAudioProcessService;
 import com.talkhelper.task.mq.ThMessage;
 import com.talkhelper.task.mq.ThMessageQueue;
 import com.talkhelper.task.mq.ThMessageQueueFactory;
@@ -34,6 +35,7 @@ public class ThTaskWorker implements CommandLineRunner {
 
     private final ThAsyncTaskService taskService;
     private final ThTextPreprocessService preprocessService;
+    private final ThAudioProcessService audioProcessService;
     private final ObjectMapper objectMapper;
     private final ThMessageQueueFactory mqFactory;
     private final ExecutorService cpuIntensiveExecutor;
@@ -49,12 +51,14 @@ public class ThTaskWorker implements CommandLineRunner {
     public ThTaskWorker(
             ThAsyncTaskService taskService,
             ThTextPreprocessService preprocessService,
+            ThAudioProcessService audioProcessService,
             ObjectMapper objectMapper,
             ThMessageQueueFactory mqFactory,
             @Qualifier("cpuIntensiveExecutor") ExecutorService cpuIntensiveExecutor,
             RedisConnectionFactory redisConnectionFactory) {
         this.taskService = taskService;
         this.preprocessService = preprocessService;
+        this.audioProcessService = audioProcessService;
         this.objectMapper = objectMapper;
         this.mqFactory = mqFactory;
         this.cpuIntensiveExecutor = cpuIntensiveExecutor;
@@ -208,12 +212,26 @@ public class ThTaskWorker implements CommandLineRunner {
                     requestData,
                     ThFileUploadRequest.class
             );
+            request.setTaskId(taskId);
 
             taskService.updateProgress(taskId, 10, "正在解析文档");
 
             var result = preprocessService.uploadAndProcessWithConfig(request);
 
-            taskService.updateProgress(taskId, 90, "正在生成结果");
+            // ===== 阶段2：音频生成（文本预处理产出播客脚本后，TTS合成音频） =====
+            String podcastScript = result.getAiResult();
+            String audioUrl = null;
+            if (podcastScript != null && !podcastScript.isEmpty()) {
+                taskService.updateProgress(taskId, 50, "正在生成播客音频");
+                try {
+                    audioUrl = audioProcessService.generatePodcastAudio(podcastScript, taskId);
+                    log.info("播客音频生成完成: taskId={}, audioUrl={}", taskId, audioUrl);
+                } catch (Exception e) {
+                    log.error("音频生成失败，任务继续完成（仅文本结果）: taskId={}", taskId, e);
+                }
+            }
+
+            taskService.updateProgress(taskId, 95, "正在生成结果");
 
             if (result.getOutputFileUrl() != null) {
                 task.setOutputFileName(result.getOutputFileName());

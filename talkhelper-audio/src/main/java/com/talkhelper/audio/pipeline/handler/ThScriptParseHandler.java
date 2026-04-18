@@ -3,7 +3,6 @@ package com.talkhelper.audio.pipeline.handler;
 import com.talkhelper.audio.pipeline.ThAudioProcessContext;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.regex.Pattern;
  * 解析带标注的播客脚本，提取角色、情绪、停顿、BGM、音效等标签
  */
 @Slf4j
-@Component
 public class ThScriptParseHandler implements ThAudioProcessHandler {
 
     // 正则表达式模式

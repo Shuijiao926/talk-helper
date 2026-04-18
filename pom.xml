@@ -114,6 +114,13 @@
                 <version>${forest.version}</version>
             </dependency>
 
+            <!-- DashScope SDK（TTS语音合成等原生能力） -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dashscope-sdk-java</artifactId>
+                <version>2.22.5</version>
+            </dependency>
+
             <!-- RocketMQ Spring Boot Starter -->
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>

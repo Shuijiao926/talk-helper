@@ -2,6 +2,9 @@ package com.talkhelper.audio.pipeline.config;
 
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import com.talkhelper.audio.pipeline.handler.*;
+import com.talkhelper.common.config.ThStorageConfig;
+import com.talkhelper.common.storage.ThObjectStorageFactory;
+import com.talkhelper.common.tts.ThTtsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +17,10 @@ import org.springframework.core.annotation.Order;
 @Configuration
 @RequiredArgsConstructor
 public class ThAudioProcessPipelineConfig {
+
+    private final ThTtsService ttsService;
+    private final ThObjectStorageFactory storageFactory;
+    private final ThStorageConfig storageConfig;
 
     /**
      * 步骤1：脚本结构化解析处理器
@@ -39,7 +46,7 @@ public class ThAudioProcessPipelineConfig {
     @Bean
     @Order(3)
     public ThAudioProcessHandler ttsSynthesisHandler() {
-        return new ThTtsSynthesisHandler();
+        return new ThTtsSynthesisHandler(ttsService);
     }
 
     /**
@@ -75,6 +82,6 @@ public class ThAudioProcessPipelineConfig {
     @Bean
     @Order(7)
     public ThAudioProcessHandler audioFinalizeHandler() {
-        return new ThAudioFinalizeHandler();
+        return new ThAudioFinalizeHandler(storageFactory, storageConfig);
     }
 }

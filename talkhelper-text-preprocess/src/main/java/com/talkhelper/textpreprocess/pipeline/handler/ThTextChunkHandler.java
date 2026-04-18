@@ -10,7 +10,6 @@ import com.talkhelper.textpreprocess.strategy.chunk.ThFixedChunkStrategy;
 import com.talkhelper.textpreprocess.vo.ThTextChunkVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
  * 根据配置选择不同的分块策略
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class ThTextChunkHandler implements ThTextProcessHandler {
 

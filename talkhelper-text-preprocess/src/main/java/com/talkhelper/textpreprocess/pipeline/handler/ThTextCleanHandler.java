@@ -7,7 +7,6 @@ import com.talkhelper.textpreprocess.strategy.cleaner.ThColloquialCleanerStrateg
 import com.talkhelper.textpreprocess.strategy.cleaner.ThGeneralCleanerStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 /**
  * 文本清洗处理器
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
  * 3. 口语化清洗(可选)
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class ThTextCleanHandler implements ThTextProcessHandler {
 

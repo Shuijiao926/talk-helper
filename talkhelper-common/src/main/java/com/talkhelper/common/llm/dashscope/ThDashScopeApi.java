@@ -7,7 +7,7 @@ import com.dtflys.forest.annotation.Header;
 import com.dtflys.forest.annotation.Post;
 
 @BaseRequest(
-        baseURL = "${dashscope.base-url}",
+        baseURL = "${dashscope.baseUrl}",
         contentType = "application/json",
         interceptor = ThDashScopeInterceptor.class
 )

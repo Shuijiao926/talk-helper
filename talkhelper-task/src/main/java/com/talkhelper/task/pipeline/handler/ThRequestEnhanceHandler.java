@@ -30,25 +30,30 @@ public class ThRequestEnhanceHandler implements ThTaskCreateHandler {
             return;
         }
 
-        try {
-            // 解析已序列化的JSON
-            JsonNode rootNode = objectMapper.readTree(context.getRequestData());
-            ObjectNode objectNode = (ObjectNode) rootNode;
-
-            // 注入inputFileUrl
-            objectNode.put("inputFileUrl", context.getInputFileUrl());
-
-            // 重新序列化
-            String enhancedData = objectMapper.writeValueAsString(objectNode);
-            context.setRequestData(enhancedData);
-
-            log.debug("请求数据增强完成: inputFileUrl={}", context.getInputFileUrl());
-
-        } catch (JsonProcessingException e) {
-            log.error("请求数据增强失败", e);
-            context.setSuccess(false);
-            context.setErrorMessage("请求数据增强失败: " + e.getMessage());
+        // 如果没有requestData,跳过
+        if (context.getRequestData() == null || context.getRequestData().isEmpty()) {
+            log.debug("没有requestData,跳过请求数据增强");
+            return;
         }
+
+//        try {
+//            // 解析已序列化的JSON
+////            JsonNode rootNode = objectMapper.readTree(context.getRequestData());
+//            ObjectNode objectNode = (ObjectNode) rootNode;
+//
+//            // 注入inputFileUrl
+//            objectNode.put("inputFileUrl", context.getInputFileUrl());
+//
+//            // 重新序列化
+//            String enhancedData = objectMapper.writeValueAsString(objectNode);
+//            context.setRequestData(enhancedData);
+//
+//            log.debug("请求数据增强完成: inputFileUrl={}", context.getInputFileUrl());
+//
+//        } catch (JsonProcessingException e) {
+//            log.error("请求数据增强失败, requestData={}", context.getRequestData(), e);
+//            throw new RuntimeException("请求数据增强失败: " + e.getMessage(), e);
+//        }
     }
 
     @Override

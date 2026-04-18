@@ -54,7 +54,7 @@ public class ThTaskFacade {
 
         } catch (Exception e) {
             log.error("创建文本预处理任务失败", e);
-            throw new RuntimeException("任务创建失败: " + e.getMessage(), e);
+            throw  new RuntimeException("任务创建失败: " + e.getMessage(), e);
         }
     }
 

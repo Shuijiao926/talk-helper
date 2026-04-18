@@ -30,6 +30,13 @@
             <version>${project.version}</version>
         </dependency>
         
+        <!-- 依赖音频合成模块 -->
+        <dependency>
+            <groupId>com.talkhelper</groupId>
+            <artifactId>talkhelper-audio</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

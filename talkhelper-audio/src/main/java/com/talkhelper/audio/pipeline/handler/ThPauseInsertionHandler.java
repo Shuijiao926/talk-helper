@@ -4,7 +4,6 @@ import com.talkhelper.audio.pipeline.ThAudioProcessContext;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import com.talkhelper.common.util.ThFfmpegUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.List;
  * 根据脚本中的停顿指令，在音频片段间插入对应时长的静音
  */
 @Slf4j
-@Component
 public class ThPauseInsertionHandler implements ThAudioProcessHandler {
 
     @Override

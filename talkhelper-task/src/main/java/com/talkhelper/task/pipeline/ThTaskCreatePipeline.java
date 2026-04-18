@@ -30,7 +30,8 @@ public class ThTaskCreatePipeline {
                 log.error("Handler执行异常: {}", handler.getClass().getSimpleName(), e);
                 context.setSuccess(false);
                 context.setErrorMessage("Handler执行异常: " + e.getMessage());
-                return;
+                // 保留原始异常,方便排查
+                throw new RuntimeException("Handler执行异常: " + handler.getClass().getSimpleName(), e);
             }
         }
 

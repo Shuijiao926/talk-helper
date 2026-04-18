@@ -66,6 +66,7 @@ public class ThTextPreprocessServiceImpl implements ThTextPreprocessService {
                     .filePath(null)  // 大文件已存MinIO，不需要本地路径
                     .request(request)
                     .fileType(fileType.getCode())
+                    .taskId(request.getTaskId())
                     .build();
 
             // 4. 执行管道处理

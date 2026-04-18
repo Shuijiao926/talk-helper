@@ -123,6 +123,10 @@ public class ThRedisMessageQueue implements ThMessageQueue {
             }
 
             return claimPendingMessage();
+        } catch (org.springframework.dao.QueryTimeoutException e) {
+            // XREADGROUP 阻塞读取超时是正常行为，不是连接故障
+            log.debug("XREADGROUP 阻塞读取超时，这是正常现象（block={}s）", timeoutSeconds);
+            return null;
         } catch (Exception e) {
             log.error("从Redis Stream接收任务失败", e);
             markUnavailable();

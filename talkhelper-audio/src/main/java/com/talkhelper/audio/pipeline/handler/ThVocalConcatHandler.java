@@ -4,7 +4,6 @@ import com.talkhelper.audio.pipeline.ThAudioProcessContext;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import com.talkhelper.common.util.ThFfmpegUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -13,7 +12,6 @@ import java.util.List;
  * 将所有音频片段（含停顿）按顺序合并成完整人声音轨
  */
 @Slf4j
-@Component
 public class ThVocalConcatHandler implements ThAudioProcessHandler {
 
     @Override

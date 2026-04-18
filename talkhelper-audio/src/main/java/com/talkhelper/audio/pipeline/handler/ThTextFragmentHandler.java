@@ -3,7 +3,6 @@ package com.talkhelper.audio.pipeline.handler;
 import com.talkhelper.audio.pipeline.ThAudioProcessContext;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +12,9 @@ import java.util.List;
  * 将段落按句子/标点切割成100-300字的短片段，防止TTS失败
  */
 @Slf4j
-@Component
 public class ThTextFragmentHandler implements ThAudioProcessHandler {
 
-    private static final int MAX_FRAGMENT_LENGTH = 300; // 最大片段长度
+    private static final int MAX_FRAGMENT_LENGTH = 30000; // 最大片段长度
     private static final int MIN_FRAGMENT_LENGTH = 100; // 最小片段长度
 
     @Override

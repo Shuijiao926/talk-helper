@@ -9,7 +9,6 @@ import com.talkhelper.textpreprocess.pipeline.ThTextProcessHandler;
 import com.talkhelper.textpreprocess.service.ThPodcastPromptTemplateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class ThAiProcessHandler implements ThTextProcessHandler {
 

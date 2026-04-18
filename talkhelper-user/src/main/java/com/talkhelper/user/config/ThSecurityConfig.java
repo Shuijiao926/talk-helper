@@ -25,6 +25,7 @@ public class ThSecurityConfig {
             "/api/auth/register",
             "/ws/**",
             "/actuator/**",
+            "/api/text-preprocess/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/error"

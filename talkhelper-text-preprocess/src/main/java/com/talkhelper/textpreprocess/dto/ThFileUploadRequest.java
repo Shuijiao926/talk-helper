@@ -25,6 +25,11 @@ public class ThFileUploadRequest {
     private String inputFileUrl;
 
     /**
+     * 任务ID（Worker消费时设置，用于MinIO路径和进度上报）
+     */
+    private String taskId;
+
+    /**
      * 文件类型: txt, md, html, pdf, docx, epub
      */
     private ThFileType fileType;

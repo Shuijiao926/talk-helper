@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -29,7 +28,6 @@ public class ThAsyncTaskService {
     private final ThMessageQueueFactory mqFactory;
     private final ThObjectStorageFactory storageFactory;
 
-    private static final String TASK_KEY_PREFIX = "task:";
     private static final long TASK_EXPIRE_DAYS = 7;
 
     public String createTask(String userId, String taskType, String requestData,
@@ -64,8 +62,8 @@ public class ThAsyncTaskService {
 
         log.debug("任务插入成功, 自动生成id={}, taskId={}", task.getId(), task.getTaskId());
 
-        String redisKey = TASK_KEY_PREFIX + taskId;
-        redisUtils.set(redisKey, task, TASK_EXPIRE_DAYS, TimeUnit.DAYS);
+        // 写入多级缓存（L1 Caffeine + L2 Redis）
+        cache.put("task:" + taskId, task, TASK_EXPIRE_DAYS * 86400);
 
         mqFactory.getActiveMQ().sendTask(taskId);
 
@@ -212,10 +210,8 @@ public class ThAsyncTaskService {
     private void updateTask(ThTaskEntity task) {
         taskMapper.updateById(task);
 
-        String redisKey = TASK_KEY_PREFIX + task.getTaskId();
-        redisUtils.set(redisKey, task, TASK_EXPIRE_DAYS, TimeUnit.DAYS);
-
-        cache.evict("task:" + task.getTaskId());
+        // 更新多级缓存（DB已更新，同步写入L1+L2缓存）
+        cache.put("task:" + task.getTaskId(), task, TASK_EXPIRE_DAYS * 86400);
     }
 
     private void pushProgress(String taskId, ThTaskEntity task) {

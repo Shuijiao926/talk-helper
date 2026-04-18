@@ -2,9 +2,11 @@ package com.talkhelper.audio.pipeline.handler;
 
 import com.talkhelper.audio.pipeline.ThAudioProcessContext;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
+import com.talkhelper.common.config.ThStorageConfig;
+import com.talkhelper.common.storage.ThObjectStorageFactory;
 import com.talkhelper.common.util.ThFfmpegUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -15,14 +17,11 @@ import java.security.MessageDigest;
  * 音量统一、降噪、压缩、上传对象存储、入库
  */
 @Slf4j
-@Component
+@RequiredArgsConstructor
 public class ThAudioFinalizeHandler implements ThAudioProcessHandler {
 
-    // TODO: 注入对象存储服务
-    // private final ThMinioUtils minioUtils;
-    
-    // TODO: 注入任务服务
-    // private final ThTaskService taskService;
+    private final ThObjectStorageFactory storageFactory;
+    private final ThStorageConfig storageConfig;
 
     @Override
     public String getName() {
@@ -66,17 +65,17 @@ public class ThAudioFinalizeHandler implements ThAudioProcessHandler {
         context.setMetadata(metadata);
         
         // 4. 上传到对象存储
-        // TODO: 上传到MinIO/S3
-        // String objectKey = "podcasts/" + context.getTaskId() + ".mp3";
-        // String audioUrl = minioUtils.uploadFile(mp3Path, objectKey);
-        String audioUrl = "http://minio:9000/podcasts/" + context.getTaskId() + ".mp3";
+        String taskId = context.getTaskId();
+        if (taskId == null || taskId.isEmpty()) {
+            taskId = "default-" + System.currentTimeMillis();
+        }
+        String objectKey = "podcasts/" + taskId + ".mp3";
+        byte[] mp3Bytes = Files.readAllBytes(mp3File.toPath());
+        String audioUrl = storageFactory.getActiveStorage().uploadBytes(
+                mp3Bytes, storageConfig.getDefaultBucket(), objectKey, "audio/mpeg");
         context.setAudioUrl(audioUrl);
         
         log.info("[{}] 音频已上传: {}", getName(), audioUrl);
-        
-        // 5. 更新任务状态（入库）
-        // TODO: 保存音频URL和元数据到数据库
-        // taskService.updateTaskAudio(context.getTaskId(), audioUrl, metadata);
         
         // 上报进度
         if (context.getProgressCallback() != null && context.getTaskId() != null) {

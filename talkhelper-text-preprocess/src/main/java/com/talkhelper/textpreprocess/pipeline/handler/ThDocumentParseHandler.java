@@ -8,7 +8,6 @@ import com.talkhelper.textpreprocess.service.ThContentSaveService;
 import com.talkhelper.textpreprocess.strategy.parser.ThDocumentParserFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -21,7 +20,6 @@ import java.nio.file.Paths;
  * 负责将文件解析为纯文本
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class ThDocumentParseHandler implements ThTextProcessHandler {
 

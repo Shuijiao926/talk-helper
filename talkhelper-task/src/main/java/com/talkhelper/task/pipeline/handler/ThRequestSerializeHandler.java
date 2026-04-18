@@ -32,7 +32,9 @@ public class ThRequestSerializeHandler implements ThTaskCreateHandler {
                     .file(file)
                     .build();
 
+            // file不可序列化，用MinIO URL替代（由ThMinioUploadHandler在order 2设置）
             request.setFile(null);
+            request.setInputFileUrl(context.getInputFileUrl());
 
             String requestData = objectMapper.writeValueAsString(request);
             context.setRequestData(requestData);
@@ -57,6 +59,6 @@ public class ThRequestSerializeHandler implements ThTaskCreateHandler {
 
     @Override
     public int getOrder() {
-        return 5;
+        return 3;
     }
 }

@@ -8,7 +8,6 @@ import com.talkhelper.textpreprocess.pipeline.ThTextProcessHandler;
 import com.talkhelper.textpreprocess.vo.ThPreprocessResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
@@ -20,7 +19,6 @@ import java.nio.charset.StandardCharsets;
  * 内容保存应由调用方根据需要独立调用保存服务
  */
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class ThResultBuildHandler implements ThTextProcessHandler {
 
@@ -83,6 +81,9 @@ public class ThResultBuildHandler implements ThTextProcessHandler {
                 // 上传到MinIO
                 ThObjectStorageStrategy storage = storageFactory.getActiveStorage();
                 String taskId = context.getTaskId();
+                if (taskId == null || taskId.isEmpty()) {
+                    taskId = "default-" + System.currentTimeMillis();
+                }
                 String objectKey = "task/" + taskId + "/" + outputFileName;
                 String bucketName = "talkhelper"; // TODO: 从配置读取
                 
