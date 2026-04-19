@@ -1,5 +1,6 @@
 package com.talkhelper.common.tts.dashscope;
 
+import com.alibaba.dashscope.audio.ttsv2.SpeechSynthesisAudioFormat;
 import com.alibaba.dashscope.audio.ttsv2.SpeechSynthesisParam;
 import com.alibaba.dashscope.audio.ttsv2.SpeechSynthesizer;
 import com.talkhelper.common.tts.ThTtsClient;
@@ -46,6 +47,7 @@ public class ThDashScopeTtsClient implements ThTtsClient {
                     .apiKey(apiKey)
                     .model(model)
                     .voice(voice)
+                    .format(SpeechSynthesisAudioFormat.WAV_22050HZ_MONO_16BIT)
                     .build();
 
             SpeechSynthesizer synthesizer = new SpeechSynthesizer(param, null);

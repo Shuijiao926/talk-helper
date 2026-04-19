@@ -18,17 +18,22 @@ public class ThTtsConfig {
     /**
      * TTS模型名称
      */
-    private String model = "cosyvoice-v3.5-plus";
+    private String model = "cosyvoice-v3-flash";
 
     /**
      * 默认音色
      */
-    private String defaultVoice = "longxiaochun";
+    private String defaultVoice = "longxiaochun_v3";
 
     /**
-     * TTS 并行度（对标 TwoCast 的 p-limit concurrency）
+     * TTS 并行度
      */
     private int concurrency = 3;
+
+    /**
+     * 单条 TTS 最长文本长度限制
+     */
+    private int maxStringLength = 20000;
 
     /**
      * 角色→音色映射

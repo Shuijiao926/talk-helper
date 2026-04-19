@@ -2,6 +2,7 @@ package com.talkhelper.audio.pipeline.config;
 
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import com.talkhelper.audio.pipeline.handler.*;
+import com.talkhelper.audio.service.ThAudioSegmentService;
 import com.talkhelper.common.config.ThStorageConfig;
 import com.talkhelper.common.storage.ThObjectStorageFactory;
 import com.talkhelper.common.tts.ThTtsConfig;
@@ -23,6 +24,7 @@ public class ThAudioProcessPipelineConfig {
     private final ThTtsConfig ttsConfig;
     private final ThObjectStorageFactory storageFactory;
     private final ThStorageConfig storageConfig;
+    private final ThAudioSegmentService audioSegmentService;
 
     /**
      * 步骤1：脚本 JSON 解析
@@ -30,7 +32,7 @@ public class ThAudioProcessPipelineConfig {
     @Bean
     @Order(1)
     public ThAudioProcessHandler scriptParseHandler() {
-        return new ThScriptParseHandler();
+        return new ThScriptParseHandler(ttsConfig);
     }
 
     /**
@@ -39,7 +41,7 @@ public class ThAudioProcessPipelineConfig {
     @Bean
     @Order(2)
     public ThAudioProcessHandler ttsSynthesisHandler() {
-        return new ThTtsSynthesisHandler(ttsService, ttsConfig);
+        return new ThTtsSynthesisHandler(ttsService, ttsConfig, storageFactory, storageConfig, audioSegmentService);
     }
 
     /**
