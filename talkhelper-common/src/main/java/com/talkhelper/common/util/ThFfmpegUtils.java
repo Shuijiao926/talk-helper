@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import ws.schild.jave.MultimediaObject;
 import ws.schild.jave.info.AudioInfo;
 import ws.schild.jave.info.MultimediaInfo;
+import ws.schild.jave.process.ffmpeg.DefaultFFMPEGLocator;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,12 +18,21 @@ import java.util.UUID;
 /**
  * FFmpeg音频处理工具类
  * 基于JAVE2 (Java Audio Video Encoder) 封装
- * 提供静音生成、音频拼接、混音、格式转换等功能
+ * 使用JAVE2内置的FFmpeg二进制，无需系统安装FFmpeg
  */
 @Slf4j
 public class ThFfmpegUtils {
 
     private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
+
+    /** JAVE2 内置 FFmpeg 可执行文件路径 */
+    private static final String FFMPEG_PATH;
+
+    static {
+        DefaultFFMPEGLocator locator = new DefaultFFMPEGLocator();
+        FFMPEG_PATH = locator.getExecutablePath();
+        log.info("使用JAVE2内置FFmpeg: {}", FFMPEG_PATH);
+    }
 
     /**
      * 生成指定时长的静音音频
@@ -38,7 +48,7 @@ public class ThFfmpegUtils {
             // 使用FFmpeg命令生成静音
             // ffmpeg -f lavfi -i anullsrc=r=44100:cl=mono -t {duration} -q:a 9 -acodec libmp3lame output.wav
             String command = String.format(
-                    "ffmpeg -y -f lavfi -i anullsrc=r=44100:cl=mono -t %.2f -acodec pcm_s16le %s",
+                    FFMPEG_PATH + " -y -f lavfi -i anullsrc=r=44100:cl=mono -t %.2f -acodec pcm_s16le %s",
                     durationSeconds,
                     outputPath
             );
@@ -75,7 +85,7 @@ public class ThFfmpegUtils {
             // 2. 执行FFmpeg拼接命令
             // ffmpeg -f concat -safe 0 -i list.txt -c copy output.wav
             String command = String.format(
-                    "ffmpeg -y -f concat -safe 0 -i \"%s\" -c copy \"%s\"",
+                    FFMPEG_PATH + " -y -f concat -safe 0 -i \"%s\" -c copy \"%s\"",
                     concatListPath,
                     outputPath
             );
@@ -108,7 +118,7 @@ public class ThFfmpegUtils {
             // FFmpeg混音命令
             // 人声保持原音量，BGM降低音量并添加淡入淡出
             String command = String.format(
-                    "ffmpeg -y -i \"%s\" -i \"%s\" " +
+                    FFMPEG_PATH + " -y -i \"%s\" -i \"%s\" " +
                     "-filter_complex \"[0:a]volume=1.0[vocal];" +
                     "[1:a]volume=%.2f,afade=t=in:st=0:d=%.1f,afade=t=out:st=end_duration-%.1f:d=%.1f[bgm];" +
                     "[vocal][bgm]amix=inputs=2:duration=first:dropout_transition=2\" " +
@@ -151,7 +161,7 @@ public class ThFfmpegUtils {
             // TP=-1.5: 真峰值上限 -1.5 dBTP
             // LRA=11: 响度范围 11 LU
             String command = String.format(
-                    "ffmpeg -y -i \"%s\" -af loudnorm=I=-16:TP=-1.5:LRA=11 " +
+                    FFMPEG_PATH + " -y -i \"%s\" -af loudnorm=I=-16:TP=-1.5:LRA=11 " +
                     "-codec:a libmp3lame -b:a 320k \"%s\"",
                     inputPath,
                     outputPath
@@ -181,7 +191,7 @@ public class ThFfmpegUtils {
             log.info("开始格式转换: {} -> {}", inputPath, outputPath);
 
             String command = String.format(
-                    "ffmpeg -y -i \"%s\" -ar %d -b:a %dk -codec:a libmp3lame \"%s\"",
+                    FFMPEG_PATH + " -y -i \"%s\" -ar %d -b:a %dk -codec:a libmp3lame \"%s\"",
                     inputPath,
                     sampleRate,
                     bitrate,
@@ -254,7 +264,7 @@ public class ThFfmpegUtils {
             // 使用adelay和amix实现音效插入
             // 这里简化处理，实际需要根据insertTime计算delay
             String command = String.format(
-                    "ffmpeg -y -i \"%s\" -i \"%s\" " +
+                    FFMPEG_PATH + " -y -i \"%s\" -i \"%s\" " +
                     "-filter_complex \"[1:a]adelay=%.0f|%.0f[sfx];[0:a][sfx]amix=inputs=2:duration=first\" " +
                     "-codec:a libmp3lame -b:a 320k \"%s\"",
                     mainAudioPath,
@@ -289,7 +299,7 @@ public class ThFfmpegUtils {
             log.info("裁剪音频: {} [{:.1f}s - {:.1f}s]", inputPath, startTime, startTime + duration);
 
             String command = String.format(
-                    "ffmpeg -y -i \"%s\" -ss %.2f -t %.2f -codec:a libmp3lame -b:a 320k \"%s\"",
+                    FFMPEG_PATH + " -y -i \"%s\" -ss %.2f -t %.2f -codec:a libmp3lame -b:a 320k \"%s\"",
                     inputPath,
                     startTime,
                     duration,
@@ -323,7 +333,7 @@ public class ThFfmpegUtils {
             log.info("添加淡入淡出: 淡入{:.1f}s, 淡出{:.1f}s", fadeInDuration, fadeOutDuration);
 
             String command = String.format(
-                    "ffmpeg -y -i \"%s\" -af \"afade=t=in:st=0:d=%.1f,afade=t=out:st=%.1f:d=%.1f\" " +
+                    FFMPEG_PATH + " -y -i \"%s\" -af \"afade=t=in:st=0:d=%.1f,afade=t=out:st=%.1f:d=%.1f\" " +
                     "-codec:a libmp3lame -b:a 320k \"%s\"",
                     inputPath,
                     fadeInDuration,

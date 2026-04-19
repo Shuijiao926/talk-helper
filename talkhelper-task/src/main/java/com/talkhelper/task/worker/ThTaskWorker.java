@@ -186,20 +186,22 @@ public class ThTaskWorker implements CommandLineRunner {
         try {
             log.info("处理线程 [{}] 开始处理任务: {}, deliveryId={}", threadName, taskId, deliveryId);
 
-            taskService.startTask(taskId);
-
+            // 先检查任务状态，防止 Pending 超时导致的重复消费
             var task = taskService.getTask(taskId);
             if (task == null) {
-                taskService.failTask(taskId, "任务不存在");
+                log.warn("任务不存在，跳过: {}", taskId);
                 mqFactory.getActiveMQ().ackTask(deliveryId);
                 return;
             }
 
-            if ("cancelled".equals(task.getStatus())) {
-                log.info("任务已取消，跳过执行: {}", taskId);
+            String currentStatus = task.getStatus();
+            if ("completed".equals(currentStatus) || "failed".equals(currentStatus) || "cancelled".equals(currentStatus)) {
+                log.info("任务已处于终态 [{}]，跳过重复消费: taskId={}", currentStatus, taskId);
                 mqFactory.getActiveMQ().ackTask(deliveryId);
                 return;
             }
+
+            taskService.startTask(taskId);
 
             String requestData = taskService.getRequestData(taskId);
             if (requestData == null) {

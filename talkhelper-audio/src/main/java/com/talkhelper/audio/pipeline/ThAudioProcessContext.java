@@ -32,6 +32,11 @@ public class ThAudioProcessContext {
     private List<String> ttsAudioPaths;
 
     /**
+     * 步骤2输出：音频片段元数据列表（有序，含OSS URL）
+     */
+    private List<SegmentInfo> segmentInfos;
+
+    /**
      * 最终结果：音频URL（对象存储地址）
      */
     private String audioUrl;
@@ -90,5 +95,20 @@ public class ThAudioProcessContext {
         private Integer sampleRate;
         private String fileHash;
         private Long createTime;
+    }
+
+    /**
+     * 音频片段元数据（在管道阶段间传递）
+     */
+    @Data
+    @Builder
+    public static class SegmentInfo {
+        private int segmentIndex;
+        private String role;
+        private String localPath;
+        private String ossUrl;
+        private long fileSize;
+        private String format;
+        private double duration;
     }
 }

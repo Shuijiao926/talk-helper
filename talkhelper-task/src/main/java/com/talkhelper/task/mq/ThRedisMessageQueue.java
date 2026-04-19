@@ -39,7 +39,7 @@ public class ThRedisMessageQueue implements ThMessageQueue {
     private static final String STREAM_KEY = "task:stream";
     private static final String CONSUMER_GROUP = "task-workers";
     private static final long DEFAULT_TIMEOUT_SECONDS = 30;
-    private static final long PENDING_MESSAGE_TIMEOUT_MINUTES = 5;
+    private static final long PENDING_MESSAGE_TIMEOUT_MINUTES = 60;
 
     private final AtomicBoolean available = new AtomicBoolean(true);
     private volatile String consumerName;

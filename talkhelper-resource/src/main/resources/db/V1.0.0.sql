@@ -154,3 +154,25 @@ CREATE TABLE IF NOT EXISTS `th_tts_character` (
     KEY `idx_is_public` (`is_public`),
     KEY `idx_create_time` (`create_time`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='TTS角色表';
+
+
+-- 音频片段表
+CREATE TABLE IF NOT EXISTS `th_audio_segment` (
+    `id`            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键ID(自增)',
+    `segment_id`    VARCHAR(64)  NOT NULL COMMENT '片段ID(UUID)',
+    `task_id`       VARCHAR(64)  NOT NULL COMMENT '关联任务ID(th_task.task_id)',
+    `segment_index` INT          NOT NULL COMMENT '片段序号(0-based)',
+    `role`          VARCHAR(32)  NOT NULL COMMENT '角色标识(host/guest)',
+    `audio_url`     VARCHAR(512) NOT NULL COMMENT '音频文件OSS URL',
+    `file_size`     BIGINT       DEFAULT NULL COMMENT '文件大小(字节)',
+    `format`        VARCHAR(16)  NOT NULL DEFAULT 'wav' COMMENT '音频格式',
+    `duration`      DOUBLE       DEFAULT NULL COMMENT '音频时长(秒)',
+    `create_time`   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted`       TINYINT      NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_segment_id` (`segment_id`),
+    KEY `idx_task_id` (`task_id`),
+    KEY `idx_task_id_segment_index` (`task_id`, `segment_index`),
+    KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='音频片段表';

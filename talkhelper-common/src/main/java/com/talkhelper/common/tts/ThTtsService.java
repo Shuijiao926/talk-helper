@@ -1,5 +1,7 @@
 package com.talkhelper.common.tts;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,17 @@ public class ThTtsService {
     private final ThTtsConfig ttsConfig;
 
     /**
+     * TTS合成结果（同时包含本地路径和原始音频字节）
+     */
+    @Data
+    @AllArgsConstructor
+    public static class ThTtsSynthesisResult {
+        private String localPath;
+        private byte[] audioData;
+        private String format;
+    }
+
+    /**
      * 合成语音并写入临时文件
      *
      * @param text 待合成文本
@@ -29,11 +42,22 @@ public class ThTtsService {
      * @return 临时WAV文件的绝对路径
      */
     public String synthesizeToFile(String text, String role) throws IOException {
-        // 角色→音色映射
+        ThTtsSynthesisResult result = synthesizeToFileAndBytes(text, role);
+        return result.getLocalPath();
+    }
+
+    /**
+     * 合成语音，同时返回本地临时文件路径和原始音频字节
+     * 一次合成避免重复I/O
+     *
+     * @param text 待合成文本
+     * @param role 角色名称
+     * @return 包含 localPath、audioData、format 的结果
+     */
+    public ThTtsSynthesisResult synthesizeToFileAndBytes(String text, String role) throws IOException {
         String voice = ttsConfig.getVoiceMapping().getOrDefault(role, ttsConfig.getDefaultVoice());
         log.debug("TTS合成: role={}, voice={}, 文本长度={}", role, voice, text.length());
 
-        // 调用TTS客户端
         ThTtsRequest request = ThTtsRequest.builder()
                 .text(text)
                 .voice(voice)
@@ -45,13 +69,16 @@ public class ThTtsService {
             throw new RuntimeException("TTS合成失败: " + response.getErrorMessage());
         }
 
-        // 写入临时文件
-        String fileName = "tts_" + UUID.randomUUID().toString().substring(0, 8) + ".wav";
-        Path tempFile = Files.createTempFile("talkhelper_", "_" + fileName);
-        Files.write(tempFile, response.getAudioData());
+        byte[] audioData = response.getAudioData();
+        String format = response.getFormat() != null ? response.getFormat() : "wav";
 
-        log.debug("TTS音频写入: {}, 大小={}bytes", tempFile, response.getAudioData().length);
-        return tempFile.toAbsolutePath().toString();
+        // 写入临时文件
+        String fileName = "tts_" + UUID.randomUUID().toString().substring(0, 8) + "." + format;
+        Path tempFile = Files.createTempFile("talkhelper_", "_" + fileName);
+        Files.write(tempFile, audioData);
+
+        log.debug("TTS音频写入: {}, 大小={}bytes", tempFile, audioData.length);
+        return new ThTtsSynthesisResult(tempFile.toAbsolutePath().toString(), audioData, format);
     }
 
     /**
