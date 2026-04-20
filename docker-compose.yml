@@ -6,7 +6,7 @@ services:
 
   # Redis - 任务队列和缓存
   redis:
-    image: redis:7.2-alpine
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/redis:8.4.0-alpine
     container_name: talkhelper-redis
     ports:
       - "6379:6379"
@@ -24,7 +24,7 @@ services:
 
   # MySQL - 业务数据
   mysql:
-    image: mysql:8.0
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/mysql/mysql-server:8.0
     container_name: talkhelper-mysql
     ports:
       - "3306:3306"
@@ -46,7 +46,7 @@ services:
 
   # MinIO - 对象存储
   minio:
-    image: minio/minio:latest
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
     container_name: talkhelper-minio
     ports:
       - "9000:9000"    # API
@@ -72,7 +72,7 @@ services:
 
   # RocketMQ NameServer
   rocketmq-namesrv:
-    image: apache/rocketmq:5.4.0
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/apache/rocketmq:5.3.2
     container_name: talkhelper-rocketmq-namesrv
     ports:
       - "9876:9876"
@@ -90,7 +90,7 @@ services:
 
   # RocketMQ Broker
   rocketmq-broker:
-    image: apache/rocketmq:5.4.0
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/apache/rocketmq:5.3.2
     container_name: talkhelper-rocketmq-broker
     ports:
       - "10911:10911"
@@ -98,7 +98,7 @@ services:
     environment:
       JAVA_OPT_EXT: "-server -Xms512m -Xmx512m"
       NAMESRV_ADDR: rocketmq-namesrv:9876
-    command: sh mqbroker -c /home/rocketmq/rocketmq-5.2.0/conf/broker.conf
+    command: sh mqbroker -n rocketmq-namesrv:9876 autoCreateTopicEnable=true
     networks:
       - talkhelper-network
     restart: unless-stopped
@@ -106,19 +106,19 @@ services:
       rocketmq-namesrv:
         condition: service_healthy
 
-  # RocketMQ Dashboard
-  rocketmq-dashboard:
-    image: apacherocketmq/rocketmq-dashboard:1.0.0
-    container_name: talkhelper-rocketmq-dashboard
-    ports:
-      - "8180:8080"
-    environment:
-      JAVA_OPTS: "-Drocketmq.namesrv.addr=rocketmq-namesrv:9876"
-    networks:
-      - talkhelper-network
-    restart: unless-stopped
-    depends_on:
-      - rocketmq-namesrv
+#  # RocketMQ Dashboard
+#  rocketmq-dashboard:
+#    image: apache/rocketmq-dashboard:latest
+#    container_name: talkhelper-rocketmq-dashboard
+#    ports:
+#      - "8180:8080"
+#    environment:
+#      JAVA_OPTS: "-Drocketmq.namesrv.addr=rocketmq-namesrv:9876"
+#    networks:
+#      - talkhelper-network
+#    restart: unless-stopped
+#    depends_on:
+#      - rocketmq-namesrv
 
   # ═══════════════════════════════════════════════════════════════════════
   # 可观测基础设施
@@ -126,7 +126,7 @@ services:
 
   # Prometheus - 指标采集
   prometheus:
-    image: ubuntu/prometheus:3.11-24.04_stable
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/prom/prometheus:v2.52.0
     container_name: talkhelper-prometheus
     ports:
       - "9090:9090"
@@ -143,7 +143,7 @@ services:
 
   # Tempo - 分布式链路追踪存储 (接收 OTLP Trace)
   tempo:
-    image: grafana/tempo:latest
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/ghcr.io/grafana/tempo-operator/tempo-operator:v0.15.3
     container_name: talkhelper-tempo
     command: ["-config.file=/etc/tempo.yaml"]
     ports:
@@ -159,7 +159,7 @@ services:
 
   # Loki - 日志聚合存储
   loki:
-    image: grafana/loki:3.0.0
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/grafana/loki:latest
     container_name: talkhelper-loki
     ports:
       - "3100:3100"
@@ -171,7 +171,7 @@ services:
 
   # Grafana - 统一可视化
   grafana:
-    image: grafana/grafana:main-ubuntu
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/quay.io/devtron/grafana:7.3.1
     container_name: talkhelper-grafana
     ports:
       - "3000:3000"
