@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOG_PATH" value="logs"/>
+    <property name="APP_NAME" value="talkhelper"/>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         控制台输出 (开发环境) - 带 traceId/spanId 的可读格式
+         ═══════════════════════════════════════════════════════════════════ -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [traceId=%X{trace_id:-N/A} spanId=%X{span_id:-N/A}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         文件输出 - 结构化 JSON 格式 (供 Loki/Logstash 采集)
+         OTel Java Agent 会自动注入 MDC: trace_id, span_id, trace_flags
+         ═══════════════════════════════════════════════════════════════════ -->
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}-json.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}-json.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!-- 结构化 JSON 单行输出，便于日志采集系统解析 -->
+            <pattern>{"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","level":"%level","logger":"%logger{36}","thread":"%thread","traceId":"%X{trace_id:-}","spanId":"%X{span_id:-}","traceFlags":"%X{trace_flags:-}","message":"%replace(%msg){'\"','\\\"'}","service":"${APP_NAME}"}%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         普通文件输出 (带 traceId 的传统格式，方便人工查看)
+         ═══════════════════════════════════════════════════════════════════ -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/${APP_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${APP_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{trace_id:-}/%X{span_id:-}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 业务包日志级别 -->
+    <logger name="com.talkhelper" level="DEBUG"/>
+
+    <!-- OTel 相关日志降级避免噪音 -->
+    <logger name="io.opentelemetry" level="INFO"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="JSON_FILE"/>
+    </root>
+
+</configuration>

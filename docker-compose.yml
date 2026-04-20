@@ -1,9 +1,12 @@
-version: '3.8'
-
 services:
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # 业务基础设施
+  # ═══════════════════════════════════════════════════════════════════════
+
   # Redis - 任务队列和缓存
   redis:
-    image: redis:7-alpine
+    image: redis:7.2-alpine
     container_name: talkhelper-redis
     ports:
       - "6379:6379"
@@ -27,7 +30,7 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: talkhelper
+      MYSQL_DATABASE: talk_helper
       MYSQL_USER: talkhelper
       MYSQL_PASSWORD: talkhelper123
     volumes:
@@ -41,75 +44,35 @@ services:
       timeout: 5s
       retries: 5
 
-  # Elasticsearch - 日志存储
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-    container_name: talkhelper-elasticsearch
-    environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
+  # MinIO - 对象存储
+  minio:
+    image: minio/minio:latest
+    container_name: talkhelper-minio
     ports:
-      - "9200:9200"
+      - "9000:9000"    # API
+      - "9001:9001"    # Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
     volumes:
-      - es-data:/usr/share/elasticsearch/data
+      - minio-data:/data
+    command: server /data --console-address ":9001"
     networks:
       - talkhelper-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
-      interval: 30s
-      timeout: 10s
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
       retries: 5
 
-  # Logstash - 日志收集和处理
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.11.0
-    container_name: talkhelper-logstash
-    ports:
-      - "5044:5044"
-      - "9600:9600"
-    volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
-    networks:
-      - talkhelper-network
-    restart: unless-stopped
-    depends_on:
-      - elasticsearch
-
-  # Kibana - 日志可视化
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.11.0
-    container_name: talkhelper-kibana
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    networks:
-      - talkhelper-network
-    restart: unless-stopped
-    depends_on:
-      - elasticsearch
-
-  # Prometheus - 监控数据采集
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: talkhelper-prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-    networks:
-      - talkhelper-network
-    restart: unless-stopped
+  # ═══════════════════════════════════════════════════════════════════════
+  # 消息队列 (RocketMQ)
+  # ═══════════════════════════════════════════════════════════════════════
 
   # RocketMQ NameServer
   rocketmq-namesrv:
-    image: apache/rocketmq:5.3.1
+    image: apache/rocketmq:5.4.0
     container_name: talkhelper-rocketmq-namesrv
     ports:
       - "9876:9876"
@@ -127,7 +90,7 @@ services:
 
   # RocketMQ Broker
   rocketmq-broker:
-    image: apache/rocketmq:5.3.1
+    image: apache/rocketmq:5.4.0
     container_name: talkhelper-rocketmq-broker
     ports:
       - "10911:10911"
@@ -135,7 +98,7 @@ services:
     environment:
       JAVA_OPT_EXT: "-server -Xms512m -Xmx512m"
       NAMESRV_ADDR: rocketmq-namesrv:9876
-    command: sh mqbroker -c /home/rocketmq/rocketmq-5.3.1/conf/broker.conf
+    command: sh mqbroker -c /home/rocketmq/rocketmq-5.2.0/conf/broker.conf
     networks:
       - talkhelper-network
     restart: unless-stopped
@@ -145,7 +108,7 @@ services:
 
   # RocketMQ Dashboard
   rocketmq-dashboard:
-    image: apacherocketmq/rocketmq-dashboard:latest
+    image: apacherocketmq/rocketmq-dashboard:1.0.0
     container_name: talkhelper-rocketmq-dashboard
     ports:
       - "8180:8080"
@@ -157,9 +120,58 @@ services:
     depends_on:
       - rocketmq-namesrv
 
-  # Grafana - 监控可视化
+  # ═══════════════════════════════════════════════════════════════════════
+  # 可观测基础设施
+  # ═══════════════════════════════════════════════════════════════════════
+
+  # Prometheus - 指标采集
+  prometheus:
+    image: ubuntu/prometheus:3.11-24.04_stable
+    container_name: talkhelper-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-remote-write-receiver'
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+
+  # Tempo - 分布式链路追踪存储 (接收 OTLP Trace)
+  tempo:
+    image: grafana/tempo:latest
+    container_name: talkhelper-tempo
+    command: ["-config.file=/etc/tempo.yaml"]
+    ports:
+      - "3200:3200"   # Tempo API (查询)
+      - "4317:4317"   # OTel gRPC (接收 Trace)
+      - "4318:4318"   # OTel HTTP (接收 Trace)
+    volumes:
+      - ./config/tempo.yaml:/etc/tempo.yaml
+      - tempo-data:/var/tempo
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+
+  # Loki - 日志聚合存储
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: talkhelper-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki-data:/loki
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+
+  # Grafana - 统一可视化
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:main-ubuntu
     container_name: talkhelper-grafana
     ports:
       - "3000:3000"
@@ -167,22 +179,79 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./config/grafana-datasources.yml:/etc/grafana/provisioning/datasources/ds.yml
     networks:
       - talkhelper-network
     restart: unless-stopped
     depends_on:
       - prometheus
+      - tempo
+      - loki
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # 应用服务
+  # ═══════════════════════════════════════════════════════════════════════
+
+  # TalkHelper 应用
+  talkhelper-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: talkhelper-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JAVA_TOOL_OPTIONS: "-javaagent:/app/otel-agent.jar -Xms512m -Xmx1024m"
+      # OTel 配置
+      OTEL_SERVICE_NAME: talk-helper
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
+      OTEL_RESOURCE_ATTRIBUTES: "service.namespace=roaming-guide,service.version=1.0.0"
+      OTEL_TRACES_SAMPLER: always_on
+      # 敏感信息从 .env 文件读取
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+    volumes:
+      - app-logs:/app/logs
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rocketmq-broker:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
 volumes:
   redis-data:
     driver: local
   mysql-data:
     driver: local
-  es-data:
+  minio-data:
     driver: local
   prometheus-data:
     driver: local
   grafana-data:
+    driver: local
+  tempo-data:
+    driver: local
+  loki-data:
+    driver: local
+  app-logs:
     driver: local
 
 networks:

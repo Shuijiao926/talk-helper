@@ -100,6 +100,14 @@ talkhelper:
       access-key: ${MINIO_ACCESS_KEY:root}
       secret-key: ${MINIO_SECRET_KEY:12345678}
       bucket-name: talkhelper
+  # 可观测性配置（应用层探针）
+  observability:
+    enabled: ${OTEL_ENABLED:true}
+    # 是否记录 Prompt/Completion 到 Span（生产环境建议 false）
+    log-prompt-content: ${OTEL_LOG_PROMPT:false}
+    log-completion-content: ${OTEL_LOG_COMPLETION:false}
+    prompt-max-length: 500
+    completion-max-length: 500
 
 # 日志配置
 logging:

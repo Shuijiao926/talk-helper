@@ -1,0 +1,51 @@
+# ==================== Docker 容器环境配置 ====================
+# 激活方式: SPRING_PROFILES_ACTIVE=docker
+# 所有地址使用 Docker 服务名（容器内网通信）
+# 敏感信息通过环境变量注入（DASHSCOPE_API_KEY, JWT_SECRET）
+
+server:
+  port: 8080
+
+spring:
+  # 数据库配置 - 使用 Docker 服务名
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/talk_helper?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: talkhelper
+    password: talkhelper123
+
+  # Redis配置 - 使用 Docker 服务名
+  data:
+    redis:
+      host: redis
+      port: 6379
+      password: talkhelper123
+      database: 0
+      timeout: 35000ms
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+          max-wait: 3000ms
+
+# RocketMQ配置 - 使用 Docker 服务名
+rocketmq:
+  name-server: rocketmq-namesrv:9876
+  enabled: true
+
+# 业务配置
+talkhelper:
+  mq:
+    type: rocketmq
+  storage:
+    minio:
+      endpoint: http://minio:9000
+      access-key: minioadmin
+      secret-key: minioadmin123
+
+# Docker 环境日志级别
+logging:
+  level:
+    root: INFO
+    com.talkhelper: INFO

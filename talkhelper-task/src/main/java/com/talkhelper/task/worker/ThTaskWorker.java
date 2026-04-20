@@ -2,6 +2,7 @@ package com.talkhelper.task.worker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talkhelper.audio.service.ThAudioProcessService;
+import com.talkhelper.common.observability.AiSemanticAttributes;
 import com.talkhelper.task.mq.ThMessage;
 import com.talkhelper.task.mq.ThMessageQueue;
 import com.talkhelper.task.mq.ThMessageQueueFactory;
@@ -9,6 +10,10 @@ import com.talkhelper.task.mq.ThRedisMessageQueue;
 import com.talkhelper.task.service.ThAsyncTaskService;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
 import com.talkhelper.textpreprocess.service.ThTextPreprocessService;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,6 +45,7 @@ public class ThTaskWorker implements CommandLineRunner {
     private final ThMessageQueueFactory mqFactory;
     private final ExecutorService cpuIntensiveExecutor;
     private final RedisConnectionFactory redisConnectionFactory;
+    private final Tracer thTracer;
 
     private static final int CONSUMER_THREAD_COUNT = 2;
     private static final long READ_TIMEOUT_SECONDS = 30;
@@ -55,7 +61,8 @@ public class ThTaskWorker implements CommandLineRunner {
             ObjectMapper objectMapper,
             ThMessageQueueFactory mqFactory,
             @Qualifier("cpuIntensiveExecutor") ExecutorService cpuIntensiveExecutor,
-            RedisConnectionFactory redisConnectionFactory) {
+            RedisConnectionFactory redisConnectionFactory,
+            Tracer thTracer) {
         this.taskService = taskService;
         this.preprocessService = preprocessService;
         this.audioProcessService = audioProcessService;
@@ -63,6 +70,7 @@ public class ThTaskWorker implements CommandLineRunner {
         this.mqFactory = mqFactory;
         this.cpuIntensiveExecutor = cpuIntensiveExecutor;
         this.redisConnectionFactory = redisConnectionFactory;
+        this.thTracer = thTracer;
     }
 
     @Override
@@ -177,13 +185,21 @@ public class ThTaskWorker implements CommandLineRunner {
     /**
      * 处理单个任务 - 在CPU线程池中执行
      * 处理完成后通过ACK确认消息，确保至少一次消费语义
+     * 创建根 Span 追踪整个任务处理链路
      */
     private void processTask(ThMessage message) {
         String taskId = message.getTaskId();
         String deliveryId = message.getDeliveryId();
         String threadName = Thread.currentThread().getName();
 
-        try {
+        // 创建任务处理的根 Span
+        Span taskSpan = thTracer.spanBuilder(AiSemanticAttributes.SPAN_TASK_PROCESS)
+                .setAttribute(AiSemanticAttributes.TASK_ID, taskId)
+                .setAttribute(AiSemanticAttributes.AGENT_NAME, "talk-helper")
+                .setAttribute(AiSemanticAttributes.AGENT_ACTION, "podcast-generate")
+                .startSpan();
+
+        try (Scope ignored = taskSpan.makeCurrent()) {
             log.info("处理线程 [{}] 开始处理任务: {}, deliveryId={}", threadName, taskId, deliveryId);
 
             // 先检查任务状态，防止 Pending 超时导致的重复消费
@@ -191,6 +207,7 @@ public class ThTaskWorker implements CommandLineRunner {
             if (task == null) {
                 log.warn("任务不存在，跳过: {}", taskId);
                 mqFactory.getActiveMQ().ackTask(deliveryId);
+                taskSpan.setAttribute(AiSemanticAttributes.TASK_STATUS, "skipped_not_found");
                 return;
             }
 
@@ -198,15 +215,18 @@ public class ThTaskWorker implements CommandLineRunner {
             if ("completed".equals(currentStatus) || "failed".equals(currentStatus) || "cancelled".equals(currentStatus)) {
                 log.info("任务已处于终态 [{}]，跳过重复消费: taskId={}", currentStatus, taskId);
                 mqFactory.getActiveMQ().ackTask(deliveryId);
+                taskSpan.setAttribute(AiSemanticAttributes.TASK_STATUS, "skipped_" + currentStatus);
                 return;
             }
 
             taskService.startTask(taskId);
+            taskSpan.setAttribute(AiSemanticAttributes.TASK_STATUS, "processing");
 
             String requestData = taskService.getRequestData(taskId);
             if (requestData == null) {
                 taskService.failTask(taskId, "请求数据不存在");
                 mqFactory.getActiveMQ().ackTask(deliveryId);
+                taskSpan.setStatus(StatusCode.ERROR, "请求数据不存在");
                 return;
             }
 
@@ -248,12 +268,18 @@ public class ThTaskWorker implements CommandLineRunner {
             taskService.completeTask(taskId, resultJson);
 
             mqFactory.getActiveMQ().ackTask(deliveryId);
+            taskSpan.setAttribute(AiSemanticAttributes.TASK_STATUS, "completed");
             log.info("任务处理完成并已ACK: taskId={}, deliveryId={}", taskId, deliveryId);
 
         } catch (Exception e) {
             log.error("任务处理失败: taskId={}, deliveryId={}", taskId, deliveryId, e);
             taskService.failTask(taskId, e.getMessage());
             mqFactory.getActiveMQ().ackTask(deliveryId);
+            taskSpan.setStatus(StatusCode.ERROR, e.getMessage());
+            taskSpan.recordException(e);
+            taskSpan.setAttribute(AiSemanticAttributes.TASK_STATUS, "failed");
+        } finally {
+            taskSpan.end();
         }
     }
 }

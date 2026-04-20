@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+.classpath
+.project
+.settings/
+.vscode/
+
+# Maven 构建产物
+**/target/
+
+# 日志
+logs/
+*.log
+
+# 环境配置（敏感信息）
+*.env
+.env
+
+# Docker/K8s 配置（不需要进入构建上下文）
+docker-compose.yml
+config/
+prometheus/
+logstash/
+
+# 文档
+*.md
+
+# OS
+.DS_Store
+Thumbs.db
