@@ -1,5 +1,6 @@
 package com.talkhelper.audio.pipeline.handler;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talkhelper.audio.pipeline.ThAudioProcessContext;
@@ -11,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 步骤1：脚本 JSON 解析处理器
@@ -29,9 +32,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ThScriptParseHandler implements ThAudioProcessHandler {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+            .configure(JsonParser.Feature.ALLOW_COMMENTS, true)
+            .configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, true)
+            .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true)
+            .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
     private static final String CHUNK_SEPARATOR = "--- 分块分隔 ---";
     private static final double MERGE_THRESHOLD_RATIO = 0.8;
+    private static final Pattern CODE_BLOCK_PATTERN = Pattern.compile("```(?:json)?\\s*\\n?(.*?)\\n?```", Pattern.DOTALL);
+    private static final Pattern JSON_ARRAY_PATTERN = Pattern.compile("(\\[\\s*\\{.*}\\s*])", Pattern.DOTALL);
+    private static final Pattern JSON_OBJECT_PATTERN = Pattern.compile("(\\{\\s*\".*})", Pattern.DOTALL);
 
     private final ThTtsConfig ttsConfig;
 
@@ -191,15 +201,25 @@ public class ThScriptParseHandler implements ThAudioProcessHandler {
     /**
      * 解析单个 JSON 块
      * 支持纯数组和 {"script": [...]} 包装对象两种格式
+     * 加入容错：从 markdown 代码块、混杂文本中提取 JSON
      */
     private List<Map<String, String>> parseChunk(String chunk) throws Exception {
-        if (chunk.startsWith("[")) {
-            return MAPPER.readValue(chunk, new TypeReference<>() {});
-        } else if (chunk.startsWith("{")) {
-            Map<String, Object> wrapper = MAPPER.readValue(chunk, new TypeReference<>() {});
+        String cleaned = extractJson(chunk);
+
+        if (cleaned.startsWith("[")) {
+            return MAPPER.readValue(cleaned, new TypeReference<>() {});
+        } else if (cleaned.startsWith("{")) {
+            Map<String, Object> wrapper = MAPPER.readValue(cleaned, new TypeReference<>() {});
             Object scriptObj = wrapper.get("script");
             if (scriptObj == null) {
-                throw new IllegalArgumentException("JSON 对象中未找到 'script' 字段");
+                // 尝试其他常见 key
+                for (String key : List.of("scripts", "data", "content", "dialogue", "dialogues")) {
+                    scriptObj = wrapper.get(key);
+                    if (scriptObj != null) break;
+                }
+            }
+            if (scriptObj == null) {
+                throw new IllegalArgumentException("JSON 对象中未找到脚本数组字段，可用的 key: " + wrapper.keySet());
             }
             return MAPPER.convertValue(scriptObj, new TypeReference<>() {});
         } else {
@@ -207,5 +227,42 @@ public class ThScriptParseHandler implements ThAudioProcessHandler {
                     getName(), chunk.substring(0, Math.min(100, chunk.length())));
             return List.of();
         }
+    }
+
+    /**
+     * 从 LLM 原始输出中提取 JSON 内容
+     * 处理常见问题：markdown 代码块、前后多余文本、尾逗号等
+     */
+    private String extractJson(String raw) {
+        String text = raw.trim();
+
+        // 1. 从 markdown 代码块中提取（```json ... ``` 或 ``` ... ```）
+        Matcher codeBlockMatcher = CODE_BLOCK_PATTERN.matcher(text);
+        if (codeBlockMatcher.find()) {
+            text = codeBlockMatcher.group(1).trim();
+            log.debug("[{}] 从 markdown 代码块中提取 JSON", getName());
+        }
+
+        // 2. 如果首字符已经是 [ 或 {，直接返回
+        if (text.startsWith("[") || text.startsWith("{")) {
+            return text;
+        }
+
+        // 3. 尝试从混杂文本中提取 JSON 数组
+        Matcher arrayMatcher = JSON_ARRAY_PATTERN.matcher(text);
+        if (arrayMatcher.find()) {
+            log.debug("[{}] 从混杂文本中提取 JSON 数组", getName());
+            return arrayMatcher.group(1);
+        }
+
+        // 4. 尝试从混杂文本中提取 JSON 对象
+        Matcher objectMatcher = JSON_OBJECT_PATTERN.matcher(text);
+        if (objectMatcher.find()) {
+            log.debug("[{}] 从混杂文本中提取 JSON 对象", getName());
+            return objectMatcher.group(1);
+        }
+
+        // 5. 无法提取，返回原文（后续解析会报错）
+        return text;
     }
 }

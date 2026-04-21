@@ -27,7 +27,7 @@ services:
     image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/mysql/mysql-server:8.0
     container_name: talkhelper-mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root123
       MYSQL_DATABASE: talk_helper
@@ -35,6 +35,7 @@ services:
       MYSQL_PASSWORD: talkhelper123
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./talkhelper-resource/src/main/resources/db:/docker-entrypoint-initdb.d
     networks:
       - talkhelper-network
     restart: unless-stopped
@@ -83,10 +84,11 @@ services:
       - talkhelper-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 9876 || exit 1"]
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/9876"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
   # RocketMQ Broker
   rocketmq-broker:
@@ -143,7 +145,7 @@ services:
 
   # Tempo - 分布式链路追踪存储 (接收 OTLP Trace)
   tempo:
-    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/ghcr.io/grafana/tempo-operator/tempo-operator:v0.15.3
+    image: grafana/tempo:2.5.0
     container_name: talkhelper-tempo
     command: ["-config.file=/etc/tempo.yaml"]
     ports:
@@ -169,9 +171,23 @@ services:
       - talkhelper-network
     restart: unless-stopped
 
+  # Promtail - 日志采集（读取应用 JSON 日志，推送到 Loki）
+  promtail:
+    image: grafana/promtail:2.9.4
+    container_name: talkhelper-promtail
+    volumes:
+      - ./config/promtail.yml:/etc/promtail/config.yml
+      - app-logs:/var/log/talkhelper:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - talkhelper-network
+    restart: unless-stopped
+    depends_on:
+      - loki
+
   # Grafana - 统一可视化
   grafana:
-    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/quay.io/devtron/grafana:7.3.1
+    image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/grafana/grafana:11.0.0
     container_name: talkhelper-grafana
     ports:
       - "3000:3000"
@@ -208,8 +224,8 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_TRACES_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: otlp
-      OTEL_LOGS_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
       OTEL_RESOURCE_ATTRIBUTES: "service.namespace=roaming-guide,service.version=1.0.0"
       OTEL_TRACES_SAMPLER: always_on
       # 敏感信息从 .env 文件读取

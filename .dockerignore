@@ -13,8 +13,20 @@ out/
 .settings/
 .vscode/
 
-# Maven 构建产物
-**/target/
+# Maven 源码（预构建模式不需要源码，只需要 target 里的 JAR）
+**/src/
+**/pom.xml
+pom.xml
+
+# 排除非 web 模块的 target
+talkhelper-common/target/
+talkhelper-text-preprocess/target/
+talkhelper-script-gen/target/
+talkhelper-audio/target/
+talkhelper-task/target/
+talkhelper-resource/target/
+talkhelper-user/target/
+talkhelper-scheduler/target/
 
 # 日志
 logs/
@@ -24,11 +36,10 @@ logs/
 *.env
 .env
 
-# Docker/K8s 配置（不需要进入构建上下文）
+# Docker/K8s 配置
 docker-compose.yml
 config/
 prometheus/
-logstash/
 
 # 文档
 *.md
