@@ -3,8 +3,8 @@ package com.talkhelper.textpreprocess.service.impl;
 import com.talkhelper.common.constant.ThConstants;
 import com.talkhelper.common.constant.ThLogConstants;
 import com.talkhelper.common.enums.ThFileType;
-import com.talkhelper.common.storage.ThObjectStorageFactory;
-import com.talkhelper.common.storage.ThObjectStorageStrategy;
+import com.roamingguide.starter.storage.ObjectStorageFactory;
+import com.roamingguide.starter.storage.ObjectStorageStrategy;
 import com.talkhelper.common.util.ThSimpleMultipartFile;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessContext;
@@ -29,7 +29,7 @@ import java.util.Arrays;
 public class ThTextPreprocessServiceImpl implements ThTextPreprocessService {
 
     private final ThTextProcessPipeline pipeline;
-    private final ThObjectStorageFactory storageFactory;
+    private final ObjectStorageFactory storageFactory;
 
     @Override
     public ThPreprocessResultVO uploadAndProcess(MultipartFile file) {
@@ -137,7 +137,7 @@ public class ThTextPreprocessServiceImpl implements ThTextPreprocessService {
             log.info("从 MinIO 下载文件: {}", fileUrl);
             
             // 获取OSS策略
-            ThObjectStorageStrategy storage = storageFactory.getActiveStorage();
+            ObjectStorageStrategy storage = storageFactory.getActiveStorage();
             
             // 从URL解析bucket和objectKey
             String[] parts = parseUrlToBucketAndKey(fileUrl);

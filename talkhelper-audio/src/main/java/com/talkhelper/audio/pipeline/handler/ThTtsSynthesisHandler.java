@@ -4,10 +4,10 @@ import com.talkhelper.audio.entity.ThAudioSegmentEntity;
 import com.talkhelper.audio.pipeline.ThAudioProcessContext;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import com.talkhelper.audio.service.ThAudioSegmentService;
-import com.talkhelper.common.config.ThStorageConfig;
-import com.talkhelper.common.storage.ThObjectStorageFactory;
-import com.talkhelper.common.tts.ThTtsConfig;
-import com.talkhelper.common.tts.ThTtsService;
+import com.roamingguide.starter.storage.StorageProperties;
+import com.roamingguide.starter.storage.ObjectStorageFactory;
+import com.roamingguide.starter.tts.TtsProperties;
+import com.roamingguide.starter.tts.TtsService;
 import com.talkhelper.common.util.ThFfmpegUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +36,10 @@ public class ThTtsSynthesisHandler implements ThAudioProcessHandler {
     private static final int ITEM_MAX_RETRY = 3;
     private static final long ITEM_RETRY_BASE_DELAY_MS = 2000;
 
-    private final ThTtsService ttsService;
-    private final ThTtsConfig ttsConfig;
-    private final ThObjectStorageFactory storageFactory;
-    private final ThStorageConfig storageConfig;
+    private final TtsService ttsService;
+    private final TtsProperties ttsProperties;
+    private final ObjectStorageFactory storageFactory;
+    private final StorageProperties storageProperties;
     private final ThAudioSegmentService audioSegmentService;
 
     @Override
@@ -55,7 +55,7 @@ public class ThTtsSynthesisHandler implements ThAudioProcessHandler {
     @Override
     public void handle(ThAudioProcessContext context) throws Exception {
         List<ThAudioProcessContext.ScriptItem> items = context.getScriptItems();
-        int concurrency = ttsConfig.getConcurrency();
+        int concurrency = ttsProperties.getConcurrency();
         int total = items.size();
 
         log.info("[{}] 开始并行TTS合成, 共 {} 个条目, 并发度={}", getName(), total, concurrency);
@@ -82,7 +82,7 @@ public class ThTtsSynthesisHandler implements ThAudioProcessHandler {
                                     item.getText().length());
 
                             // 1. 单条目级别重试（指数退避），获取本地路径和音频字节
-                            ThTtsService.ThTtsSynthesisResult result = synthesizeWithRetry(
+                            TtsService.TtsSynthesisResult result = synthesizeWithRetry(
                                     item.getText(), item.getRole(), idx);
                             audioPaths[idx] = result.getLocalPath();
 
@@ -147,13 +147,13 @@ public class ThTtsSynthesisHandler implements ThAudioProcessHandler {
      * 上传音频片段到 OSS
      * 失败不抛异常，返回 null
      */
-    private String uploadToOss(ThTtsService.ThTtsSynthesisResult result, String taskId, int idx) {
+    private String uploadToOss(TtsService.TtsSynthesisResult result, String taskId, int idx) {
         try {
             String objectKey = "audio-segments/" + taskId + "/" + idx + "." + result.getFormat();
             String contentType = "wav".equals(result.getFormat()) ? "audio/wav" : "audio/" + result.getFormat();
             String ossUrl = storageFactory.getActiveStorage().uploadBytes(
                     result.getAudioData(),
-                    storageConfig.getDefaultBucket(),
+                    storageProperties.getDefaultBucket(),
                     objectKey,
                     contentType);
             log.debug("[{}] 片段[{}] 已上传OSS: {}", getName(), idx, ossUrl);
@@ -210,7 +210,7 @@ public class ThTtsSynthesisHandler implements ThAudioProcessHandler {
      * 带重试的单条 TTS 合成
      * 指数退避：2s → 4s → 8s
      */
-    private ThTtsService.ThTtsSynthesisResult synthesizeWithRetry(String text, String role, int idx) throws Exception {
+    private TtsService.TtsSynthesisResult synthesizeWithRetry(String text, String role, int idx) throws Exception {
         Exception lastException = null;
         for (int attempt = 0; attempt <= ITEM_MAX_RETRY; attempt++) {
             try {

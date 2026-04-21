@@ -1,8 +1,8 @@
 package com.talkhelper.textpreprocess.strategy.cleaner;
 
-import com.talkhelper.common.dto.ThLlmRequest;
-import com.talkhelper.common.dto.ThLlmResponse;
-import com.talkhelper.common.llm.ThLlmService;
+import com.roamingguide.starter.llm.LlmRequest;
+import com.roamingguide.starter.llm.LlmResponse;
+import com.roamingguide.starter.llm.LlmService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ThAiStructuredCleanerStrategy implements ThTextCleanerStrategy {
 
-    private final ThLlmService llmService;
+    private final LlmService llmService;
 
     private static final String PROMPT_TEMPLATE = """
             你是专业的文本结构化助手。
@@ -42,12 +42,12 @@ public class ThAiStructuredCleanerStrategy implements ThTextCleanerStrategy {
             variables.put("text", text);
 
             // 调用LLM
-            ThLlmRequest request = ThLlmRequest.builder()
+            LlmRequest request = LlmRequest.builder()
                     .promptTemplate(PROMPT_TEMPLATE)
                     .variables(variables)
                     .build();
 
-            ThLlmResponse response = llmService.execute(request);
+            LlmResponse response = llmService.execute(request);
 
             if (!response.isSuccess()) {
                 log.warn("AI结构化清洗失败: {}, 返回原文本", response.getErrorMessage());

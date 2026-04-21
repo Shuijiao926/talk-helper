@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talkhelper.audio.pipeline.ThAudioProcessContext;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
-import com.talkhelper.common.tts.ThTtsConfig;
+import com.roamingguide.starter.tts.TtsProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,7 +43,7 @@ public class ThScriptParseHandler implements ThAudioProcessHandler {
     private static final Pattern JSON_ARRAY_PATTERN = Pattern.compile("(\\[\\s*\\{.*}\\s*])", Pattern.DOTALL);
     private static final Pattern JSON_OBJECT_PATTERN = Pattern.compile("(\\{\\s*\".*})", Pattern.DOTALL);
 
-    private final ThTtsConfig ttsConfig;
+    private final TtsProperties ttsProperties;
 
     @Override
     public String getName() {
@@ -99,7 +99,7 @@ public class ThScriptParseHandler implements ThAudioProcessHandler {
         int afterRoleMerge = merged.size();
 
         // 3. 按 TTS 文本长度阈值进一步聚合同角色条目
-        int mergeThreshold = (int) (ttsConfig.getMaxStringLength() * MERGE_THRESHOLD_RATIO);
+        int mergeThreshold = (int) (ttsProperties.getMaxStringLength() * MERGE_THRESHOLD_RATIO);
         List<ThAudioProcessContext.ScriptItem> aggregated = aggregateByTextLength(merged, mergeThreshold);
 
         context.setScriptItems(aggregated);

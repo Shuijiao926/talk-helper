@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.talkhelper</groupId>
+        <artifactId>talkhelper-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <groupId>com.roamingguide</groupId>
+    <artifactId>roaming-guide-starter-otel</artifactId>
+    <packaging>jar</packaging>
+    <name>Roaming Guide Starter - OTel</name>
+    <description>AI 可观测性探针 Starter（OpenTelemetry 切面 + 语义属性 + 自动配置）</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <!-- OpenTelemetry API -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+        </dependency>
+
+        <!-- OpenTelemetry Semconv -->
+        <dependency>
+            <groupId>io.opentelemetry.semconv</groupId>
+            <artifactId>opentelemetry-semconv</artifactId>
+        </dependency>
+
+        <!-- Optional: LLM Starter（条件加载 LlmTraceAspect） -->
+        <dependency>
+            <groupId>com.roamingguide</groupId>
+            <artifactId>roaming-guide-starter-llm</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Optional: TTS Starter（条件加载 TtsTraceAspect） -->
+        <dependency>
+            <groupId>com.roamingguide</groupId>
+            <artifactId>roaming-guide-starter-tts</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

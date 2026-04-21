@@ -1,5 +1,6 @@
 package com.talkhelper.common.observability;
 
+import com.roamingguide.starter.otel.AiSemanticAttributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
@@ -18,15 +19,15 @@ import org.springframework.stereotype.Component;
  *
  * task.process (TaskWorker.processTask)
  *   ├── task.text_preprocess (ThTextPreprocessService.uploadAndProcessWithConfig)
- *   │     └── llm.chat (ThLlmService.execute) -- 由 ThLlmTraceAspect 负责
+ *   │     └── llm.chat (LlmService.execute) -- 由 LlmTraceAspect 负责
  *   └── task.audio_gen (ThAudioProcessService.generatePodcastAudio)
- *         └── tts.synthesize (ThTtsService.synthesizeToFileAndBytes) -- 由 ThTtsTraceAspect 负责
+ *         └── tts.synthesize (TtsService.synthesizeToFileAndBytes) -- 由 TtsTraceAspect 负责
  */
 @Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "talkhelper.observability", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "roaming-guide.observability", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class ThTaskTraceAspect {
 
     private final Tracer thTracer;

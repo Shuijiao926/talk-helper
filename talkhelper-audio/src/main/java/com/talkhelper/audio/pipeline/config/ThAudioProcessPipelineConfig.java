@@ -3,10 +3,10 @@ package com.talkhelper.audio.pipeline.config;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
 import com.talkhelper.audio.pipeline.handler.*;
 import com.talkhelper.audio.service.ThAudioSegmentService;
-import com.talkhelper.common.config.ThStorageConfig;
-import com.talkhelper.common.storage.ThObjectStorageFactory;
-import com.talkhelper.common.tts.ThTtsConfig;
-import com.talkhelper.common.tts.ThTtsService;
+import com.roamingguide.starter.storage.StorageProperties;
+import com.roamingguide.starter.storage.ObjectStorageFactory;
+import com.roamingguide.starter.tts.TtsProperties;
+import com.roamingguide.starter.tts.TtsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,10 +20,10 @@ import org.springframework.core.annotation.Order;
 @RequiredArgsConstructor
 public class ThAudioProcessPipelineConfig {
 
-    private final ThTtsService ttsService;
-    private final ThTtsConfig ttsConfig;
-    private final ThObjectStorageFactory storageFactory;
-    private final ThStorageConfig storageConfig;
+    private final TtsService ttsService;
+    private final TtsProperties ttsProperties;
+    private final ObjectStorageFactory storageFactory;
+    private final StorageProperties storageProperties;
     private final ThAudioSegmentService audioSegmentService;
 
     /**
@@ -32,7 +32,7 @@ public class ThAudioProcessPipelineConfig {
     @Bean
     @Order(1)
     public ThAudioProcessHandler scriptParseHandler() {
-        return new ThScriptParseHandler(ttsConfig);
+        return new ThScriptParseHandler(ttsProperties);
     }
 
     /**
@@ -41,7 +41,7 @@ public class ThAudioProcessPipelineConfig {
     @Bean
     @Order(2)
     public ThAudioProcessHandler ttsSynthesisHandler() {
-        return new ThTtsSynthesisHandler(ttsService, ttsConfig, storageFactory, storageConfig, audioSegmentService);
+        return new ThTtsSynthesisHandler(ttsService, ttsProperties, storageFactory, storageProperties, audioSegmentService);
     }
 
     /**
@@ -50,6 +50,6 @@ public class ThAudioProcessPipelineConfig {
     @Bean
     @Order(3)
     public ThAudioProcessHandler audioFinalizeHandler() {
-        return new ThAudioFinalizeHandler(storageFactory, storageConfig);
+        return new ThAudioFinalizeHandler(storageFactory, storageProperties);
     }
 }

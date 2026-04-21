@@ -79,6 +79,9 @@ talkhelper:
   # 消息队列配置
   mq:
     type: ${MQ_TYPE:redis}  # 可选: redis, rabbitmq, rocketmq
+
+# Roaming Guide Starter 通用能力配置
+roaming-guide:
   # LLM配置
   llm:
     provider: dashscope  # 可选: dashscope, openai, claude

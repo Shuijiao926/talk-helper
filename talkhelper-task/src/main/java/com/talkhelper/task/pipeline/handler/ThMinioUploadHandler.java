@@ -1,8 +1,8 @@
 package com.talkhelper.task.pipeline.handler;
 
-import com.talkhelper.common.config.ThStorageConfig;
-import com.talkhelper.common.storage.ThObjectStorageFactory;
-import com.talkhelper.common.storage.ThObjectStorageStrategy;
+import com.roamingguide.starter.storage.StorageProperties;
+import com.roamingguide.starter.storage.ObjectStorageFactory;
+import com.roamingguide.starter.storage.ObjectStorageStrategy;
 import com.talkhelper.common.util.ThIdGenerator;
 import com.talkhelper.task.pipeline.ThTaskCreateContext;
 import com.talkhelper.task.pipeline.ThTaskCreateHandler;
@@ -21,8 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ThMinioUploadHandler implements ThTaskCreateHandler {
 
-    private final ThStorageConfig storageConfig;
-    private final ThObjectStorageFactory storageFactory;
+    private final StorageProperties storageProperties;
+    private final ObjectStorageFactory storageFactory;
 
     @Override
     public void handle(ThTaskCreateContext context) {
@@ -41,13 +41,13 @@ public class ThMinioUploadHandler implements ThTaskCreateHandler {
 
         try {
             // 获取OSS策略
-            ThObjectStorageStrategy storage = storageFactory.getActiveStorage();
+            ObjectStorageStrategy storage = storageFactory.getActiveStorage();
 
             // 生成对象键: task/{taskId}/{fileName}
             String taskId = ThIdGenerator.generateTaskId();
             String fileName = context.getInputFileName();
             String objectKey = "task/" + taskId + "/" + fileName;
-            String bucketName = storageConfig.getDefaultBucket();
+            String bucketName = storageProperties.getDefaultBucket();
 
             // 上传文件
             String fileUrl = storage.uploadFile(file, bucketName, objectKey);

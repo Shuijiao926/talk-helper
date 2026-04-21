@@ -17,99 +17,81 @@
     <description>公共模块 - 常量、枚举、异常、工具类</description>
 
     <dependencies>
+        <!-- ========== Roaming Guide Starters（通用能力） ========== -->
+        <dependency>
+            <groupId>com.roamingguide</groupId>
+            <artifactId>roaming-guide-starter-llm</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.roamingguide</groupId>
+            <artifactId>roaming-guide-starter-tts</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.roamingguide</groupId>
+            <artifactId>roaming-guide-starter-otel</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.roamingguide</groupId>
+            <artifactId>roaming-guide-starter-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- ========== TalkHelper 自有依赖 ========== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        
-        <!-- Spring AOP（支持切面编程） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-        
+
         <!-- Spring Data Redis（缓存支持） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-        
+
         <!-- Caffeine 本地缓存 -->
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
         </dependency>
-        
+
         <!-- MyBatis Plus（Entity基类和自动填充需要） -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <optional>true</optional>
         </dependency>
-        
+
         <!-- Spring AI Alibaba Agent Framework -->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-agent-framework</artifactId>
             <optional>true</optional>
         </dependency>
-        
+
         <!-- DashScope ChatModel 支持 -->
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
             <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
             <optional>true</optional>
         </dependency>
-        
-        <!-- DashScope SDK（TTS语音合成） -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>dashscope-sdk-java</artifactId>
-            <exclusions>
-                <!-- 排除slf4j-simple，避免与Spring Boot的Logback冲突 -->
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
-        <!-- Forest 声明式HTTP客户端 -->
-        <dependency>
-            <groupId>com.dtflys.forest</groupId>
-            <artifactId>forest-spring-boot3-starter</artifactId>
-        </dependency>
-        
-        <!-- MinIO 对象存储 -->
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>8.5.7</version>
-        </dependency>
-        
+
         <!-- FFmpeg Java封装（音频处理） -->
         <dependency>
             <groupId>ws.schild</groupId>
             <artifactId>jave-core</artifactId>
             <version>3.3.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <!-- OpenTelemetry API (探针核心) -->
-        <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-api</artifactId>
-        </dependency>
-
-        <!-- OpenTelemetry Semconv (语义约定) -->
-        <dependency>
-            <groupId>io.opentelemetry.semconv</groupId>
-            <artifactId>opentelemetry-semconv</artifactId>
         </dependency>
     </dependencies>
 

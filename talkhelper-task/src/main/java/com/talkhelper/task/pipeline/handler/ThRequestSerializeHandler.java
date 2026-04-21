@@ -2,7 +2,7 @@ package com.talkhelper.task.pipeline.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.talkhelper.common.storage.ThObjectStorageFactory;
+import com.roamingguide.starter.storage.ObjectStorageFactory;
 import com.talkhelper.task.pipeline.ThTaskCreateContext;
 import com.talkhelper.task.pipeline.ThTaskCreateHandler;
 import com.talkhelper.textpreprocess.dto.ThFileUploadRequest;
@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ThRequestSerializeHandler implements ThTaskCreateHandler {
 
     private final ObjectMapper objectMapper;
-    private final ThObjectStorageFactory storageFactory;
+    private final ObjectStorageFactory storageFactory;
 
     @Override
     public void handle(ThTaskCreateContext context) {

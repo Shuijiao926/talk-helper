@@ -2,8 +2,8 @@ package com.talkhelper.audio.pipeline.handler;
 
 import com.talkhelper.audio.pipeline.ThAudioProcessContext;
 import com.talkhelper.audio.pipeline.ThAudioProcessHandler;
-import com.talkhelper.common.config.ThStorageConfig;
-import com.talkhelper.common.storage.ThObjectStorageFactory;
+import com.roamingguide.starter.storage.StorageProperties;
+import com.roamingguide.starter.storage.ObjectStorageFactory;
 import com.talkhelper.common.util.ThFfmpegUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ThAudioFinalizeHandler implements ThAudioProcessHandler {
 
-    private final ThObjectStorageFactory storageFactory;
-    private final ThStorageConfig storageConfig;
+    private final ObjectStorageFactory storageFactory;
+    private final StorageProperties storageProperties;
 
     @Override
     public String getName() {
@@ -80,7 +80,7 @@ public class ThAudioFinalizeHandler implements ThAudioProcessHandler {
         String objectKey = "podcasts/" + taskId + ".mp3";
         byte[] mp3Bytes = Files.readAllBytes(mp3File.toPath());
         String audioUrl = storageFactory.getActiveStorage().uploadBytes(
-                mp3Bytes, storageConfig.getDefaultBucket(), objectKey, "audio/mpeg");
+                mp3Bytes, storageProperties.getDefaultBucket(), objectKey, "audio/mpeg");
         context.setAudioUrl(audioUrl);
 
         log.info("[{}] 音频已上传: {}, 时长={}s, 大小={}bytes",

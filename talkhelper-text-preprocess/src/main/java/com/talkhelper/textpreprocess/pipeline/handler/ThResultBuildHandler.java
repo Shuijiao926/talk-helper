@@ -1,8 +1,8 @@
 package com.talkhelper.textpreprocess.pipeline.handler;
 
 import com.talkhelper.common.constant.ThConstants;
-import com.talkhelper.common.storage.ThObjectStorageFactory;
-import com.talkhelper.common.storage.ThObjectStorageStrategy;
+import com.roamingguide.starter.storage.ObjectStorageFactory;
+import com.roamingguide.starter.storage.ObjectStorageStrategy;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessContext;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessHandler;
 import com.talkhelper.textpreprocess.vo.ThPreprocessResultVO;
@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class ThResultBuildHandler implements ThTextProcessHandler {
 
-    private final ThObjectStorageFactory storageFactory;
+    private final ObjectStorageFactory storageFactory;
 
     @Override
     public String getName() {
@@ -79,7 +79,7 @@ public class ThResultBuildHandler implements ThTextProcessHandler {
                 );
                 
                 // 上传到MinIO
-                ThObjectStorageStrategy storage = storageFactory.getActiveStorage();
+                ObjectStorageStrategy storage = storageFactory.getActiveStorage();
                 String taskId = context.getTaskId();
                 if (taskId == null || taskId.isEmpty()) {
                     taskId = "default-" + System.currentTimeMillis();

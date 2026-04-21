@@ -38,6 +38,9 @@ rocketmq:
 talkhelper:
   mq:
     type: rocketmq
+
+# Roaming Guide Starter Docker 覆盖配置
+roaming-guide:
   storage:
     minio:
       endpoint: http://minio:9000

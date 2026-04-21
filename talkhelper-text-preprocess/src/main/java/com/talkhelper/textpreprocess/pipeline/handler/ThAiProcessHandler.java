@@ -1,9 +1,9 @@
 package com.talkhelper.textpreprocess.pipeline.handler;
 
 import com.talkhelper.common.constant.ThLogConstants;
-import com.talkhelper.common.dto.ThLlmRequest;
-import com.talkhelper.common.dto.ThLlmResponse;
-import com.talkhelper.common.llm.ThLlmService;
+import com.roamingguide.starter.llm.LlmRequest;
+import com.roamingguide.starter.llm.LlmResponse;
+import com.roamingguide.starter.llm.LlmService;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessContext;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessHandler;
 import com.talkhelper.textpreprocess.service.ThPodcastPromptTemplateService;
@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class ThAiProcessHandler implements ThTextProcessHandler {
 
-    private final ThLlmService llmService;
+    private final LlmService llmService;
     private final ThPodcastPromptTemplateService promptTemplateService;
     private final ExecutorService ioIntensiveExecutor;
 
@@ -81,12 +81,12 @@ public class ThAiProcessHandler implements ThTextProcessHandler {
                             variables.put("input_text", chunk.getContent());
                             variables.put("minimum_words", "500");
 
-                            ThLlmRequest request = ThLlmRequest.builder()
+                            LlmRequest request = LlmRequest.builder()
                                     .promptTemplate(promptTemplate)
                                     .variables(variables)
                                     .build();
 
-                            ThLlmResponse response = llmService.execute(request);
+                            LlmResponse response = llmService.execute(request);
 
                             if (!response.isSuccess()) {
                                 log.warn("[{}] 分块 {}/{} 处理失败: {}",

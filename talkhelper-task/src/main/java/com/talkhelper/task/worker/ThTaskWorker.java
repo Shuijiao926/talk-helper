@@ -2,7 +2,7 @@ package com.talkhelper.task.worker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talkhelper.audio.service.ThAudioProcessService;
-import com.talkhelper.common.observability.AiSemanticAttributes;
+import com.roamingguide.starter.otel.AiSemanticAttributes;
 import com.talkhelper.task.mq.ThMessage;
 import com.talkhelper.task.mq.ThMessageQueue;
 import com.talkhelper.task.mq.ThMessageQueueFactory;

@@ -1,7 +1,7 @@
 package com.talkhelper.textpreprocess.pipeline.config;
 
-import com.talkhelper.common.llm.ThLlmService;
-import com.talkhelper.common.storage.ThObjectStorageFactory;
+import com.roamingguide.starter.llm.LlmService;
+import com.roamingguide.starter.storage.ObjectStorageFactory;
 import com.talkhelper.textpreprocess.pipeline.ThTextProcessHandler;
 import com.talkhelper.textpreprocess.pipeline.handler.*;
 import com.talkhelper.textpreprocess.service.ThContentSaveService;
@@ -36,10 +36,10 @@ public class ThTextProcessPipelineConfig {
     private final ThColloquialCleanerStrategy colloquialCleanerStrategy;
     private final ThFixedChunkStrategy fixedChunkStrategy;
     private final ThChapterChunkStrategy chapterChunkStrategy;
-    private final ThLlmService llmService;
+    private final LlmService llmService;
     private final ThPodcastPromptTemplateService promptTemplateService;
     private final ExecutorService ioIntensiveExecutor;  // IO密集型线程池
-    private final ThObjectStorageFactory storageFactory;
+    private final ObjectStorageFactory storageFactory;
 
     /**
      * 文档解析处理器 - 第1步

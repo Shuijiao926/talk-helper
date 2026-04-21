@@ -20,6 +20,12 @@
     <description>AI-powered podcast generation platform - Parent POM</description>
 
     <modules>
+        <!-- Roaming Guide 公共 Starter -->
+        <module>roaming-guide-starter-llm</module>
+        <module>roaming-guide-starter-tts</module>
+        <module>roaming-guide-starter-otel</module>
+        <module>roaming-guide-starter-storage</module>
+        <!-- TalkHelper 业务模块 -->
         <module>talkhelper-common</module>
         <module>talkhelper-text-preprocess</module>
         <module>talkhelper-script-gen</module>
@@ -50,6 +56,28 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Roaming Guide Starters -->
+            <dependency>
+                <groupId>com.roamingguide</groupId>
+                <artifactId>roaming-guide-starter-llm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.roamingguide</groupId>
+                <artifactId>roaming-guide-starter-tts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.roamingguide</groupId>
+                <artifactId>roaming-guide-starter-otel</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.roamingguide</groupId>
+                <artifactId>roaming-guide-starter-storage</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- Lombok -->
             <dependency>
                 <groupId>org.projectlombok</groupId>

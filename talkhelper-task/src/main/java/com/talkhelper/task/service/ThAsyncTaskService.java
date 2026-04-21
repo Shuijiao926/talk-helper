@@ -3,7 +3,7 @@ package com.talkhelper.task.service;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.talkhelper.common.cache.ThMultiLevelCache;
 import com.talkhelper.common.enums.ThTaskStatus;
-import com.talkhelper.common.storage.ThObjectStorageFactory;
+import com.roamingguide.starter.storage.ObjectStorageFactory;
 import com.talkhelper.common.util.ThRedisUtils;
 import com.talkhelper.task.dto.ThTaskProgressDTO;
 import com.talkhelper.task.entity.ThTaskEntity;
@@ -26,7 +26,7 @@ public class ThAsyncTaskService {
     private final ThMultiLevelCache cache;
     private final ThRedisUtils redisUtils;
     private final ThMessageQueueFactory mqFactory;
-    private final ThObjectStorageFactory storageFactory;
+    private final ObjectStorageFactory storageFactory;
 
     private static final long TASK_EXPIRE_DAYS = 7;
 
