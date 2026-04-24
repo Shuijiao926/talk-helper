@@ -1,0 +1,55 @@
+# ═══════════════════════════════════════════════════════════════════════
+# TalkHelper 应用服务
+# 依赖 roming-guide 公共基础设施（需先启动 roming-guide/infra/docker-compose.yml）
+# ═══════════════════════════════════════════════════════════════════════
+
+services:
+
+  # TalkHelper 应用
+  talkhelper-app:
+    build:
+      context: ../../../../..
+      dockerfile: Dockerfile
+    container_name: talkhelper-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JAVA_TOOL_OPTIONS: "-javaagent:/app/otel-agent.jar -Xms512m -Xmx1024m"
+      # OTel 配置
+      OTEL_SERVICE_NAME: talk-helper
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://roaming-guide-tempo:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+      OTEL_RESOURCE_ATTRIBUTES: "service.namespace=roaming-guide,service.version=1.0.0"
+      OTEL_TRACES_SAMPLER: always_on
+      # 敏感信息从 .env 文件读取
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+    volumes:
+      - app-logs:/app/logs
+    networks:
+      - roaming-guide-network
+    restart: unless-stopped
+    depends_on:
+      - roaming-guide-mysql
+      - roaming-guide-redis
+      - roaming-guide-minio
+      - roaming-guide-rocketmq-broker
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  app-logs:
+    driver: local
+
+networks:
+  roaming-guide-network:
+    external: true
+    name: roming-guide_roaming-guide-network

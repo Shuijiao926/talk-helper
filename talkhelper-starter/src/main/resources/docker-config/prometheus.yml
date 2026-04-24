@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Spring Boot应用监控
+  - job_name: 'talkhelper'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['talkhelper-app:8080']
+        labels:
+          application: 'talkhelper'
+          
+  # Prometheus自身监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

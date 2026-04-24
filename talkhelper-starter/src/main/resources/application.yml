@@ -1,0 +1,145 @@
+# ==================== 应用基础配置（固定不变）====================
+spring:
+  application:
+    name: talkhelper
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+      enabled: true
+  profiles:
+    active: local
+  # 数据库配置 - 本地开发环境
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3307/talk_helper?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: talkhelper
+    password: talkhelper123
+  # Redis配置 - 本地开发环境
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: talkhelper123
+      database: 0
+      timeout: 35000ms
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+          max-wait: 3000ms
+  # Spring AI Alibaba DashScope配置
+  ai:
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY:sk-5355539b05fc43c598e03cf05fc47117}
+      chat:
+        options:
+          model: qwen3-max
+
+# MyBatis Plus配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-change-in-production}
+  expiration: 86400000
+
+# Actuator监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+# Forest 声明式HTTP客户端配置
+forest:
+  backend: okhttp3
+  connect-timeout: 10000
+  read-timeout: 300000
+  max-retry-count: 1
+  log-enabled: true
+  log-request: true
+  log-response-status: true
+  log-response-content: false
+  variables:
+    dashscope:
+      baseUrl: https://dashscope.aliyuncs.com/compatible-mode/v1
+
+# RocketMQ配置
+rocketmq:
+  name-server: ${ROCKETMQ_NAMESRV:127.0.0.1:9876}
+  producer:
+    group: talkhelper-producer-group
+    send-message-timeout: 3000
+    retry-times-when-send-failed: 2
+  # 本地开发时禁用RocketMQ自动配置，避免启动失败
+  enabled: ${ROCKETMQ_ENABLED:false}
+
+# 业务配置
+talkhelper:
+  # 消息队列配置
+  mq:
+    type: ${MQ_TYPE:redis}  # 可选: redis, rabbitmq, rocketmq
+
+# Roaming Guide Starter 通用能力配置
+roaming-guide:
+  # LLM配置
+  llm:
+    provider: dashscope  # 可选: dashscope, openai, claude
+  # TTS语音合成配置
+  tts:
+    model: cosyvoice-v3-flash
+    default-voice: longxiaochun_v3
+    concurrency: 3  # DashScope CosyVoice 并发度，按配额调整
+    voice-mapping:
+      "[host]": longxiaochun_v3
+      "[guest]": longshuo_v3
+  # 对象存储通用配置
+  storage:
+    default-bucket: talkhelper
+    active-type: minio  # 可选: minio, local, s3
+    # MinIO专用配置
+    minio:
+      endpoint: ${MINIO_ENDPOINT:http://127.0.0.1:9000}
+      access-key: ${MINIO_ACCESS_KEY:root}
+      secret-key: ${MINIO_SECRET_KEY:12345678}
+      bucket-name: talkhelper
+  # 可观测性配置（应用层探针）
+  observability:
+    enabled: ${OTEL_ENABLED:true}
+    # 是否记录 Prompt/Completion 到 Span（生产环境建议 false）
+    log-prompt-content: ${OTEL_LOG_PROMPT:false}
+    log-completion-content: ${OTEL_LOG_COMPLETION:false}
+    prompt-max-length: 500
+    completion-max-length: 500
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.talkhelper: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/talkhelper.log
+    max-size: 100MB
+    max-history: 30

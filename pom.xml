@@ -20,21 +20,12 @@
     <description>AI-powered podcast generation platform - Parent POM</description>
 
     <modules>
-        <!-- Roaming Guide 公共 Starter -->
-        <module>roaming-guide-starter-llm</module>
-        <module>roaming-guide-starter-tts</module>
-        <module>roaming-guide-starter-otel</module>
-        <module>roaming-guide-starter-storage</module>
-        <!-- TalkHelper 业务模块 -->
-        <module>talkhelper-common</module>
-        <module>talkhelper-text-preprocess</module>
-        <module>talkhelper-script-gen</module>
-        <module>talkhelper-audio</module>
-        <module>talkhelper-task</module>
-        <module>talkhelper-resource</module>
-        <module>talkhelper-user</module>
-        <module>talkhelper-scheduler</module>
-        <module>talkhelper-web</module>
+        <!-- COLA 架构核心模块 (5个) -->
+        <module>talkhelper-domain</module>
+        <module>talkhelper-infrastructure</module>
+        <module>talkhelper-app</module>
+        <module>talkhelper-adapter</module>
+        <module>talkhelper-starter</module>
     </modules>
 
     <properties>
@@ -52,6 +43,7 @@
         <rocketmq-spring.version>2.3.1</rocketmq-spring.version>
         <opentelemetry.version>1.37.0</opentelemetry.version>
         <opentelemetry-instrumentation.version>2.4.0</opentelemetry-instrumentation.version>
+        <roaming-guide.version>0.1.0-SNAPSHOT</roaming-guide.version>
     </properties>
 
     <dependencyManagement>
@@ -59,23 +51,10 @@
             <!-- Roaming Guide Starters -->
             <dependency>
                 <groupId>com.roamingguide</groupId>
-                <artifactId>roaming-guide-starter-llm</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.roamingguide</groupId>
-                <artifactId>roaming-guide-starter-tts</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.roamingguide</groupId>
-                <artifactId>roaming-guide-starter-otel</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.roamingguide</groupId>
-                <artifactId>roaming-guide-starter-storage</artifactId>
-                <version>${project.version}</version>
+                <artifactId>roaming-guide-bom</artifactId>
+                <version>${roaming-guide.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <!-- Lombok -->
@@ -207,6 +186,20 @@
                 <groupId>com.alibaba.cloud.ai</groupId>
                 <artifactId>spring-ai-alibaba-core</artifactId>
                 <scope>compile</scope>
+            </dependency>
+
+            <!-- PDFBox -->
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+
+            <!-- Jsoup -->
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>1.17.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
